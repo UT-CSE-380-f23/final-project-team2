@@ -1,0 +1,57 @@
+\section{Governing equations, nomenclature, etc}
+
+The goal of this project is to use finite-difference schemes to solve the heat equation in 1D and 2D space. In 1D, we are solving
+
+$$
+\begin{cases}
+    -k \frac{d^2}{dx^2}T(x) = q(x) \text{ in } \Omega \\
+    T(x) = T_b(x) \text{ on } \partial\Omega \\
+\end{cases} 
+$$
+
+and in 2D,
+
+$$
+\begin{cases}
+    -k \nabla^2 T(x,y) = q(x,y) \text{ in } \Omega \\
+    T(x,y) = T_b(x,y) \text{ on } \partial\Omega
+\end{cases} 
+$$
+
+where $\Omega = [0,1]^d$ is the physical and computational domain in both cases. The coefficient $k$ is a constant and as shown above, the boundary conditions are Dirichlet conditions.
+
+\subsection{Manufactured solution: 1D case.}
+Let the manufactured solution be: 
+
+\begin{equation*}
+    T(x) = \text{sin}(2 \pi x)
+\end{equation*}
+
+Then it solves the following equation
+
+$$
+\begin{cases}
+    -k \frac{d^2}{dx^2}T(x) = \text{sin}(2\pi x) =: q(x)\text{ in } \Omega \\
+    T(x) = 0 \text{ on } \partial\Omega \\
+    k = 1/(4\pi^2)
+\end{cases} 
+$$
+
+\subsection{Manufactured solution: 2D case.}
+Let the manufactured solution be: 
+
+\begin{equation*}
+    T(x,y) = \text{sin}(2 \pi x)\text{ sin}(2 \pi y)
+\end{equation*}
+
+Then it solves the following equation
+
+$$
+\begin{cases}
+    -k \nabla^2 T(x,y) = \text{sin}(2 \pi x)\text{ sin}(2 \pi y) =: q(x,y)\text{ in } \Omega \\
+    T(x,y) = 0 \text{ on } \partial\Omega \\
+    k = 1/(8\pi^2)
+\end{cases} 
+$$
+
+These two manufactured solutions will serve to quantify the error produced by the numerical scheme by comparing approximated and the analytical solutions of these two problems. 

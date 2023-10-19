@@ -1,0 +1,61 @@
+\documentclass{article}
+
+\usepackage[margin=0.5in]{geometry}
+%\geometry{legalpaper, landscape, margin=1in}
+
+\usepackage{graphicx} % Required for inserting images
+
+\usepackage{biblatex} %Imports biblatex package
+\addbibresource{citations.bib} %Import the bibliography file
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+% for code formatting:
+\usepackage{listings}
+%\lstset{
+%  basicstyle=\ttfamily,
+%  columns=fullflexible,
+%  frame=single,
+%  breaklines=true,
+%  postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+%}
+
+\usepackage{textcomp}
+
+\title{First Milestone -  Tools and Techniques}
+\author{Kenneth L  Meyer, Jenil Shah, Rodrigo Gonzalez}
+\date{October 19th, 2023}
+
+\begin{document}
+
+\maketitle
+
+%\section{Introduction}
+
+%task list:
+%\begin{enumerate}
+%    \item \textbf{Kenneth/Jenil} Governing equations, nomenclature, computational domain, and boundary conditions.
+%    \item \textbf{Rodrigo} Expressions for a manufactured analytical solution and corresponding right hand side q and boundary conditions Tb, for both the 2D and 3D cases.
+%    \item Numerical Method:
+%    \begin{enumerate}
+%        \item \textbf{Jenil} Provide 2nd- and 4th-order (central) finite-difference approximations for the second derivative in the heat equation. Make sure to include the leading order of the truncation error. Provide discrete approximations of the heat equation using these formulations (again including truncation error).
+%        \item \textbf{Jenil} Provide representative figures of 1D and 2D discretized grids indicating domain size, grid sizes (including variable names that will be referenced in your input file later on), and finite-difference notation for neighboring cells. Be sure to indicate whether your scheme is node-based or cell-based.
+%        \item \textbf{Rodrigo} Outline the linear system that you will form as part of the numerical method. Indicate the number of non-zero entries on an interior row of the matrix for the 1D, and 2D cases with both finite difference schemes (bonus points will be given for nice figures which highlight the structure of the resulting matrices).
+%        \item \textbf{Kenneth} In pseudo-code, provide a simple iterative solution mechanism for the resulting linear system using: i. Jacobi ii. Gauss-Seidel
+%        \item \textbf{Kenneth} Estimate the amount of memory required (using double-precision) to implement your numerical methods. Recall that the system matrix is sparse, and that you do not need to store the zero entries of the matrix.
+%        \item \textbf{everyone} You may add bibliographic references as needed.
+
+%    \end{enumerate}
+
+%\end{enumerate}
+
+\input{./Sections/01-governing-eqs.tex}
+%--------------------------------------
+\input{./Sections/03d-iterative-solution-method.tex}
+%--------------------------------------
+
+%\bibliographystyle{plain}
+%\bibliography{citations.bib}
+\printbibliography %Prints bibliography
+
+\end{document}
