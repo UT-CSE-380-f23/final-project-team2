@@ -3,22 +3,60 @@
     Header file for parsing command line input and parsing logfiles.
 
 */
+#ifndef parsing
+#define parsing
 
-#include <fstream>
-#include <stdlib.h>
-#include <time.h>
-#include <cmath>
-#include <iostream>
-#include <boost/program_options.hpp>
+#include<cstdio>
+#include<cstdlib>
+#include<iostream>
+#include<grvy.h>
 
-// used to parse command-line arguments
-namespace po = boost::program_options;
+/**
+ * @brief Parses runtime options from input.txt file
+ * 
+ * @param argc input from main()
+ * @param argv input from main()
+ * @return int 
+ */
+int parse_inputs_grvy(int argc, char **argv){
+    
+    GRVY_Input_Class iparse; // Input parsing object
 
-using namespace std;
+    double reyn;
+
+    // Initialize/read the file 
+    if(! iparse.Open("./pecos-input.txt"))
+        exit(1);
+
+    // Read specific variables (with no default values provided)
+
+    if( iparse.Read_Var("reyn",&reyn,0.) )
+        printf("--> %-11s = %f\n","reyn",reyn);
+  
+    // Read in option variables
+
+    // Read in domain variables
+
+    // Read in solver variables
+
+    // Close file and exit
+    iparse.Close()
+    return 0;
+
+}
+
 
 // example from here: https://www.boost.org/doc/libs/1_63_0/doc/html/program_options/tutorial.html#idp523371328
 // is used to help code the function below:
-int parse_commandLine_args(int ac, char** av){
+/**
+ * @brief Parses command line arguments 
+ * 
+ * @param ac input from main program
+ * @param av input from main program
+ * @return int 
+ */
+int deprecated_parsing(int ac, char** av){
+
     /*
         Parses command line arguments, which are as follows:
         --dim : 1, 2 (default 1)
@@ -53,17 +91,19 @@ int parse_commandLine_args(int ac, char** av){
 
     // return help message and do not run code if --help is given
     if (vm.count("help")) {
-        cout << desc << "\n";
+        std::cout << desc << "\n";
         return 1;
     }
 
     // set default options for some variables if none are chosen
     if (vm.count("dim")) {
-        cout << "Solving problem in " << vm["dim"].as<int>() << "D" << "\n";
+        std::cout << "Solving problem in " << vm["dim"].as<int>() << "D" << "\n";
     } else {
-        cout << "Must specify problem dimension!!";
+        std::cout << "Must specify problem dimension!!";
     }
 
 
     return 0;
 }
+
+#endif
