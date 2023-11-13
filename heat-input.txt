@@ -1,0 +1,35 @@
+#  -*-getpot-*-
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# Inputs for Heat Equation Solver
+#
+#
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+# Generic modes/options, defined globally
+# ------------------------------------------------------------------------------
+
+verify = 0 # Option to run in verification mode
+mode = 0   # Option to run in stadard or debug mode
+
+# ------------------------------------------------------------------------------
+# Domain we are solving the equation on
+# ------------------------------------------------------------------------------
+
+[domain]
+
+DIM = 1 # Problem dimension, 1 or 2d
+N = 10        # Mesh Discretization
+
+# ------------------------------------------------------------------------------
+# Options for how to solve the PDE
+# ------------------------------------------------------------------------------
+
+[solver]
+
+ORDER = 2 # Finite Difference Order to use
+solver = 'jacobi' # Iterative method to use to solve linear system, jacobi or gauss-Seidel
+
+# note: could turn into an integer option if we're trying to save as much time as possible,
+# integer comparison is much cheaper than string comparison

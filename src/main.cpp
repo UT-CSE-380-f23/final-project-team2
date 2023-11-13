@@ -11,7 +11,7 @@
 
 // variables
 int n_samples;
-int DIM, ORDER, N, VERIFY;
+//int DIM, ORDER, N, VERIFY;
 //SOLVER, MODE;
 
 // used to parse command-line arguments
@@ -37,8 +37,12 @@ using namespace std;
 
 int main(int n_args,char *argv[]){
 
-    n_samples = atoi(argv[1]);
 
-    cout << n_samples << "\n";
+    GrvyParser grvy_parser(n_args,argv);
 
+    // can add some tests/checks using this output.
+    cout << "Checking variables from main " << endl;
+    cout << "verify    = " << grvy_parser.verify << endl;
+    cout << "mode      = " << grvy_parser.mode << endl;
+    cout << "N         = " << grvy_parser.N << endl;
 }
