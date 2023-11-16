@@ -47,6 +47,6 @@ int main(int n_args,char *argv[]){
 
     cout << "hello fromn the beggining of main" << "\n";
 
-    oneDimFouOrd(51);
+    TwoDimSecOrd(7);
 
 }

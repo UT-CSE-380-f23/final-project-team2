@@ -167,6 +167,85 @@ void oneDimFouOrd(int N_arg){
     std::cout << "hello from the end of oneDimFouOrd" << "\n";
 }
 
+/*
+
+Two dimension - second order. 
+
+*/
+
+int TwoDimSecOrd(int N_arg){
+    std::cout << "hello from the beggining of TwoDimSecOrd" << "\n";
+
+    double constant       = 1.0 / (8 * M_PI * M_PI);     /* constant in front of matrix */
+    const size_t N = N_arg;                       /* number of grid points */
+    const size_t k = N-2;                         /* subtract 2 to exclude boundaries */
+    const int    n = k*k;                         /* size of the sytem/matrix */
+    const double h = 1.0 / (N-1);                 /* grid spacing */
+    
+    // Print the grid spacing:
+    std::cout << "grid spacing: " << h  << "\n";
+
+    gsl_spmatrix *A = gsl_spmatrix_alloc(n ,n); /* triplet format */
+    gsl_vector *f = gsl_vector_alloc(n);        /* right hand side vector */
+    gsl_vector *u = gsl_vector_alloc(n);        /* solution vector */
+
+    /* construct the sparse matrix for the finite difference equation */
+    double xi, yj, f_val;
+
+    for (int i = 0; i < k; i++){
+    for (int j = 0; j < k; j++){
+      // Set the matrix
+      gsl_spmatrix_set(A, i*k+j, i*k+j, -4.0);
+
+      if(i != 0)  {gsl_spmatrix_set(A, i*k+j, (i-1)*k+j, 1.0);}
+      if(i != k-1){gsl_spmatrix_set(A, i*k+j, (i+1)*k+j, 1.0);}
+
+      if(j != 0)  {gsl_spmatrix_set(A, i*k+j, i*k+(j-1), 1.0);}
+      if(j != k-1){gsl_spmatrix_set(A, i*k+j, i*k+(j+1), 1.0);}
+
+      // Set the RHS
+      xi = (i + 1) * h;
+      yj = (j + 1) * h;
+      f_val = sin(2.0 * M_PI * xi)*sin(2.0 * M_PI * yj);
+      gsl_vector_set(f, i*k+j, f_val);
+
+    }
+    }
+
+    // Scale RHS
+    gsl_vector_scale(f, (-1.0)*h*h/constant);
+
+    /* Print the matrix */
+    double val = 0;
+
+    for (int i = 0; i < n; i++){
+    for (int j = 0; j < n; j++){
+      val = gsl_spmatrix_get(A, i, j);
+
+      if (val > 0){
+        std::cout << "+" << val << " ";
+      }else if(val == 0){
+        std::cout << " " << val << " ";
+      }else{
+        std::cout << val << " ";
+      }
+    }
+      std::cout << "\n";
+    }
+
+    return 0;
+
+    // // Solve the system
+    // iteration_element_based(N_arg, A, f, u, true);
+
+    /* Free the space */
+    gsl_spmatrix_free(A);
+    gsl_vector_free(f);
+    gsl_vector_free(u);
+
+    std::cout << "hello from the end of TwoDimSecOrd" << "\n";
+}
+
 
 
 #endif // MATRIX_H
