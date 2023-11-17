@@ -22,8 +22,6 @@ One dimension - second order.
 */
 
 void oneDimSecOrd(int N_arg){
-    std::cout << "hello from the beggining of oneDimSecOrd" << "\n";
-
     double k       = 1.0 / (4 * M_PI * M_PI);     /* constant in front of matrix */
     const size_t N = N_arg;                       /* number of grid points */
     const size_t n = N-2;                         /* subtract 2 to exclude boundaries */
@@ -67,14 +65,15 @@ void oneDimSecOrd(int N_arg){
     }
 
     // Solve the system
-    iteration_element_based(N_arg, A, f, u, true);
+    jacobi(n, A, f, u);
+
+    // Print h
+    std::cout << "h: " << h << "\n";
 
     /* Free the space */
     gsl_spmatrix_free(A);
     gsl_vector_free(f);
     gsl_vector_free(u);
-
-    std::cout << "hello from the end of oneDimSecOrd" << "\n";
 }
 
 /*
@@ -83,9 +82,7 @@ One dimension - fourth order.
 
 */
 
-void oneDimFouOrd(int N_arg){
-    std::cout << "hello from the beggining of oneDimFouOrd" << "\n";
-
+void oneDimFouOrd(const int& N_arg){
     double k       = 1.0 / (4 * M_PI * M_PI);     /* constant in front of matrix */
     const size_t N = N_arg;                       /* number of grid points */
     const size_t n = N-2;                         /* subtract 2 to exclude boundaries */
@@ -95,7 +92,6 @@ void oneDimFouOrd(int N_arg){
     std::cout << "grid spacing: " << h  << "\n";
 
     gsl_spmatrix *A = gsl_spmatrix_alloc(n ,n); /* triplet format */
-    gsl_spmatrix *C;                            /* compressed format */
     gsl_vector *f = gsl_vector_alloc(n);        /* right hand side vector */
     gsl_vector *u = gsl_vector_alloc(n);        /* solution vector */
     size_t i;
@@ -152,19 +148,16 @@ void oneDimFouOrd(int N_arg){
       gsl_vector_set(f, i, fi);
     }
 
-    /* convert to compressed column format (May not be needed))*/ 
-    C = gsl_spmatrix_ccs(A); 
-
     // Solve the system
-    iteration_element_based(N_arg, A, f, u, false);
+    iteration_element_based(n, A, f, u, false);
+
+    // Print h
+    std::cout << "h: " << h << "\n";
 
     /* Free the space */
     gsl_spmatrix_free(A);
-    gsl_spmatrix_free(C);
     gsl_vector_free(f);
     gsl_vector_free(u);
-
-    std::cout << "hello from the end of oneDimFouOrd" << "\n";
 }
 
 /*
@@ -174,12 +167,13 @@ Two dimension - second order.
 */
 
 int TwoDimSecOrd(int N_arg){
-    std::cout << "hello from the beggining of TwoDimSecOrd" << "\n";
+    double constant       = 1.0 / (8 * M_PI * M_PI);    /* constant in front of matrix */
+    const size_t N = N_arg;                             /* number of grid points */
+    const size_t k = N-2;                               /* subtract 2 to exclude boundaries */
+    const int    n = k*k;                               /* size of the sytem/matrix */
 
-    double constant       = 1.0 / (8 * M_PI * M_PI);     /* constant in front of matrix */
-    const size_t N = N_arg;                       /* number of grid points */
-    const size_t k = N-2;                         /* subtract 2 to exclude boundaries */
-    const int    n = k*k;                         /* size of the sytem/matrix */
+    std::cout << "size of system: " << n << "\n";
+
     const double h = 1.0 / (N-1);                 /* grid spacing */
     
     // Print the grid spacing:
@@ -212,10 +206,9 @@ int TwoDimSecOrd(int N_arg){
     }
     }
 
-    // Scale RHS
-    gsl_vector_scale(f, (-1.0)*h*h/constant);
-
+    
     /* Print the matrix */
+    /*
     double val = 0;
 
     for (int i = 0; i < n; i++){
@@ -230,20 +223,25 @@ int TwoDimSecOrd(int N_arg){
         std::cout << val << " ";
       }
     }
-      std::cout << "\n";
+      std::cout << "=" << gsl_vector_get(f, i) << "\n";
     }
+    */
 
-    return 0;
+    // Scale the matrix
+    gsl_spmatrix_scale(A, (-1.0)*constant/(h*h));
 
-    // // Solve the system
-    // iteration_element_based(N_arg, A, f, u, true);
+    // Solve the system
+    jacobi(n, A, f, u);
+
+    // Print h
+    std::cout << "h: " << h << "\n";
 
     /* Free the space */
     gsl_spmatrix_free(A);
     gsl_vector_free(f);
     gsl_vector_free(u);
 
-    std::cout << "hello from the end of TwoDimSecOrd" << "\n";
+    return 0;
 }
 
 

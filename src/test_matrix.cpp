@@ -41,12 +41,12 @@ using namespace std;
 
 int main(int n_args,char *argv[]){
 
-    // n_samples = atoi(argv[1]);
+    n_samples = atoi(argv[1]);
 
     // cout << n_samples << "\n";
 
-    cout << "hello fromn the beggining of main" << "\n";
+    TwoDimSecOrd(n_samples);
 
-    TwoDimSecOrd(7);
+    return 0;
 
 }
