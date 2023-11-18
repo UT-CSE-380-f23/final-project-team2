@@ -232,6 +232,7 @@ int TwoDimSecOrd(int N_arg){
 
     // Solve the system
     jacobi(n, A, f, u);
+    // iteration_element_based(n, A, f, u, true);
 
     // Print h
     std::cout << "h: " << h << "\n";
