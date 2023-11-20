@@ -6,6 +6,7 @@
 #include <time.h>
 #include <cmath>
 #include <iostream>
+#include "oned_solver.h"
 //#include <boost/program_options.hpp>
 #include "parsing.h"
 
@@ -16,8 +17,6 @@ int n_samples;
 
 // used to parse command-line arguments
 //namespace po = boost::program_options;
-
-using namespace std;
 
 /* input options
 
@@ -37,6 +36,10 @@ using namespace std;
 
 int main(int n_args,char *argv[]){
 
+    size_t num_nodes = atoi(argv[1]);
+    std::cout<<"We are in main with nodes "<<num_nodes<<std::endl;
+    OneDSolver sl{num_nodes, false};
+    sl.system_solve(); // Example without libgrvy
 
     GrvyParser grvy_parser(n_args,argv);
 
@@ -45,4 +48,5 @@ int main(int n_args,char *argv[]){
     cout << "verify    = " << grvy_parser.verify << endl;
     cout << "mode      = " << grvy_parser.mode << endl;
     cout << "N         = " << grvy_parser.N << endl;
+    return 0;
 }

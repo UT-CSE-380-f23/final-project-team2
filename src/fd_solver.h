@@ -1,0 +1,48 @@
+#ifndef MATRIX_H
+#define MATRIX_H
+
+#include <iostream>
+#include <cmath>
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+#include <gsl/gsl_integration.h>
+#include <gsl/gsl_math.h>
+#include <gsl/gsl_vector.h>
+#include <gsl/gsl_spmatrix.h>
+#include <gsl/gsl_splinalg.h>
+#include <gsl/gsl_spblas.h>
+
+/*
+
+FDM Solver Abstract Class 
+
+*/
+class FDSolver{
+  protected:
+    gsl_spmatrix *A{};
+    gsl_vector *f{}, *u{};
+    const size_t num_nodes;
+    const size_t num_nodes_no_bndry;
+    const size_t dim;
+    const bool solver_method;
+        /* Variables used for the Gauss-Seidel iteration */
+    const double tol;                   /* solution relative tolerance */
+    const int max_iter;                     /* maximum iterations */
+    typedef double (FDSolver::*fn_element)(const gsl_vector*, const int&);
+    fn_element solver_function;
+  public:
+    FDSolver();
+    FDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method);
+    FDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method, const double& tol, 
+    const int& max_iter);
+    ~FDSolver();
+    //void (*solver_method)(const size_t& N, gsl_spmatrix& A, gsl_vector& f, const gsl_vector& u)
+    void system_solve();
+    virtual void construct_matrix()=0;
+    double jacobi_element(const gsl_vector* u_prev, const int& j);
+    double gauss_sidel_element(const gsl_vector* u_prev, const int& j);
+};
+
+#endif
