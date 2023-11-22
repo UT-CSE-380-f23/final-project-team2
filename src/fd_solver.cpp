@@ -1,8 +1,14 @@
 #include "fd_solver.h"
 
+/*
+** Default constructor
+*/
 FDSolver::FDSolver():FDSolver(0,0,true, 1.0e-6, 1000000){
-};
+}; 
 
+/*
+** Parametrized constructor
+*/
 FDSolver::FDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method):FDSolver(num_nodes, dim, solver_method, 1.0e-6, 1000000){
 };
 
@@ -12,22 +18,22 @@ FDSolver::FDSolver(const size_t& num_nodes, const size_t& dim, const bool& solve
     this->A = gsl_spmatrix_alloc(this->num_nodes_no_bndry ,this->num_nodes_no_bndry); /* triplet format */
     this->f = gsl_vector_alloc(this->num_nodes_no_bndry);        /* right hand side vector */
     this->u = gsl_vector_alloc(this->num_nodes_no_bndry);        /* solution vector */
-    if(this->solver_method)
+    if(this->solver_method) // Deciding which solver element to use
         this->solver_function=&FDSolver::jacobi_element;
     else
         this->solver_function=&FDSolver::gauss_sidel_element;
 };
 
-FDSolver::~FDSolver(){
+FDSolver::~FDSolver(){ // Free memory for A, u, f
     gsl_vector_free(this->f);
     gsl_vector_free(this->u);
     gsl_spmatrix_free(this->A);
 };
 
-double FDSolver::jacobi_element(const gsl_vector* u_prev, const int& j){
+const double FDSolver::jacobi_element(const gsl_vector* u_prev, const int& j){
     return gsl_vector_get(u_prev, j);
 };
-double FDSolver::gauss_sidel_element(const gsl_vector* u_prev, const int& j){
+const double FDSolver::gauss_sidel_element(const gsl_vector* u_prev, const int& j){
     return gsl_vector_get(this->u, j);
 };
 
@@ -43,7 +49,7 @@ void FDSolver::system_solve(){//(int N_arg, gsl_spmatrix *M, gsl_vector *b, gsl_
     gsl_vector_set_zero(u_prev);
     /* iterate */
     while(this->tol < residual && k < max_iter){
-        for (i=0; i < this->num_nodes_no_bndry; i++){
+        for (i=0; i < this->num_nodes_no_bndry; i++){ // need to optimize this to nnz
             sigma = -gsl_spmatrix_get(this->A, i, i)*(this->*solver_function)(u_prev, i);
             for (j = 0; j < this->num_nodes_no_bndry; j++)
                 sigma = sigma + gsl_spmatrix_get(this->A, i, j)*(this->*solver_function)(u_prev, j);

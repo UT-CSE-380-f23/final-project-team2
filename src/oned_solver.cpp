@@ -7,6 +7,9 @@ OneDSolver::OneDSolver(const size_t& num_nodes, const bool& solver_method):FDSol
   std::cout<<"We are constructing oned solver with "<< num_nodes<<std::endl;
 };
 
+/*
+** This function creates the matrices and vectors for the 1D mesh
+*/
 void OneDSolver::construct_matrix(){
     const double h = 1.0 / (this->num_nodes-1);                 /* grid spacing */
     // Print the grid spacing:
