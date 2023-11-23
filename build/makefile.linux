@@ -1,6 +1,8 @@
 # Flags
 #CFLAGS_1 = -Wall -I//Users/rodrigogonzalez/gsl/gsl-instal/include	# Compiling
 #CFLAGS_2 = -L/Users/rodrigogonzalez/gsl/gsl-instal/lib				# Linking
+CFLAGS_1 = -Wall -I /home/kenneth/soft/gsl-install/include # Compiling
+CFLAGS_2 = -L /home/kenneth/soft/gsl-install/lib # Linking
 
 CFLAGS_3 = -lgsl -lgslcblas -lm										# Linking
 
@@ -9,15 +11,15 @@ all: executable
 # Linking
 executable: main.o
 	@echo "Linking and producing the final application"
-	g++ $(CFLAGS_2) $(CFLAGS_3) main.o -o test_executable
+	g++ $(CFLAGS_2) main.o -o test_executable $(CFLAGS_3)
 
 # Compiling
 main.o:
 	@echo "Compiling the main file"
-	g++ $(CFLAGS_1) -c ../src/main.cpp -o main.o
+	g++ $(CFLAGS_1) -c ../src/main.cpp -o main.o $(CFLAGS_3)
 
 # Clear
 clear:
 	@echo "Removing all the files"
-	@rm main.o executable
+	@rm main.o test_executable
 	 
