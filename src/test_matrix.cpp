@@ -6,7 +6,6 @@
 #include <time.h>
 #include <cmath>
 #include <iostream>
-#include "oned_solver.h"
 //#include <boost/program_options.hpp>
 //#include "parsing.h"
 
@@ -16,11 +15,13 @@
 
 // variables
 int n_samples;
-//int DIM, ORDER, N, VERIFY;
+int DIM, ORDER, N, VERIFY;
 //SOLVER, MODE;
 
 // used to parse command-line arguments
 //namespace po = boost::program_options;
+
+using namespace std;
 
 /* input options
 
@@ -40,17 +41,12 @@ int n_samples;
 
 int main(int n_args,char *argv[]){
 
-    size_t num_nodes = atoi(argv[1]);
-    std::cout<<"We are in main with nodes "<<num_nodes<<std::endl;
-    OneDSolver sl{num_nodes, false};
-    sl.system_solve(); // Example without libgrvy
+    n_samples = atoi(argv[1]);
 
-    GrvyParser grvy_parser(n_args,argv);
+    // cout << n_samples << "\n";
 
-    // can add some tests/checks using this output.
-    cout << "Checking variables from main " << endl;
-    cout << "verify    = " << grvy_parser.verify << endl;
-    cout << "mode      = " << grvy_parser.mode << endl;
-    cout << "N         = " << grvy_parser.N << endl;
+    TwoDimSecOrd(n_samples);
+
     return 0;
+
 }

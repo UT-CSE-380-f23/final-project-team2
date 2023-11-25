@@ -21,12 +21,8 @@ Performs the Jacobi iteration
 
 */
 
-void jacobi(int N_arg, gsl_spmatrix *M, gsl_vector *b, gsl_vector *x){
-    std::cout << "hello from the beggining of jacobi" << "\n";
-
-    /* Some variables */
-    const size_t N = N_arg;                                     /* number of grid points */
-    const size_t n = N-2;                                       /* subtract 2 to exclude boundaries */
+int jacobi(int size_of_system, gsl_spmatrix *M, gsl_vector *b, gsl_vector *x){
+    const size_t n = size_of_system;                            /* subtract 2 to exclude boundaries */
 
     gsl_spmatrix *D_inv     = gsl_spmatrix_alloc(n ,n);         /* triplet format */
     gsl_spmatrix *H         = gsl_spmatrix_alloc(n ,n);         /* triplet format */
@@ -62,6 +58,7 @@ void jacobi(int N_arg, gsl_spmatrix *M, gsl_vector *b, gsl_vector *x){
     }
 
     /* Print these matrices */
+    /*
     for (int j = 0; j < n; ++j){
         for (i = 0; i < n; ++i){
             // std::cout << i << "," << j << " "; 
@@ -69,8 +66,10 @@ void jacobi(int N_arg, gsl_spmatrix *M, gsl_vector *b, gsl_vector *x){
         }
         std::cout << "\n";
     }
+    */
 
     /* Print these matrices */
+    /*
     for (int j = 0; j < n; ++j){
         for (i = 0; i < n; ++i){
             // std::cout << i << "," << j << " "; 
@@ -78,6 +77,7 @@ void jacobi(int N_arg, gsl_spmatrix *M, gsl_vector *b, gsl_vector *x){
         }
         std::cout << "\n";
     }
+    */
 
     /* scale M by -1 */
     gsl_spmatrix_scale(M, -1.0);
@@ -92,6 +92,8 @@ void jacobi(int N_arg, gsl_spmatrix *M, gsl_vector *b, gsl_vector *x){
     gsl_spblas_dgemv(CblasNoTrans, 1, D_inv_c, b, 0.0, r);
 
     /* Print this matrix */
+
+    /*
     for (int j = 0; j < n; ++j){
         for (i = 0; i < n; ++i){
             // std::cout << i << "," << j << " "; 
@@ -100,18 +102,21 @@ void jacobi(int N_arg, gsl_spmatrix *M, gsl_vector *b, gsl_vector *x){
         std::cout << "\n";
     }
     std::cout << "\n";
+    */
 
+    
     /* Print the RHS */
+    /*
     for (i = 0; i < n; ++i){
         // std::cout << i << "," << j << " "; 
         std::cout << gsl_vector_get(r, i) << " ";
     }
     std::cout << "\n";
-
+    */
 
     /* Apply the Jacobi iteration */
     const double tol    = 1.0e-6;       /* solution relative tolerance */
-    const size_t max_iter = 10000;        /* maximum iterations */
+    const size_t max_iter = 100000;        /* maximum iterations */
     int iter = 0;
     double residual             = 100.0;
     double prevResidual         = residual + 1.0;
@@ -140,7 +145,7 @@ void jacobi(int N_arg, gsl_spmatrix *M, gsl_vector *b, gsl_vector *x){
         // Update the residual and print it
         gsl_vector_sub(x, x_prev);
         residual = gsl_blas_dnrm2(x);
-        std::cout << "residual: " << residual << "\n";
+        // std::cout << "residual: " << residual << "\n";
 
         // Only continue if the resiudal is decreasing
         if (prevResidual < residual){
@@ -152,14 +157,22 @@ void jacobi(int N_arg, gsl_spmatrix *M, gsl_vector *b, gsl_vector *x){
 
     }
 
-    //if (tol >= residual){
-        std::cout << "The iteration coverged to the following solution: " << "\n";
-        // Print x
-        for (i = 0; i < n; i++)
-        {
-        std::cout << "x_" << i << "=" << gsl_vector_get (x_prev, i) << "\n";
-        }
-    //}
+    std::cout << "The finalized with the following residual: " << residual << "\n";
+    // Print x
+    // for (i = 0; i < n; i++){ std::cout << "x_" << i << "=" << gsl_vector_get (x_prev, i) << "\n";  }
+
+    /*
+        Now we compute the error of the solution. 
+    */
+
+    // Compute the error vector
+    gsl_vector_sub(b, x_prev);
+
+    // Print error vector
+    // for (i = 0; i < n; i++){ std::cout << "error_" << i << "=" << gsl_vector_get (b, i) << "\n";}
+    
+    // Print the l2 error
+    std::cout << "\n \n" << "L2 error: " << gsl_blas_dnrm2(b) << "\n \n";
 
     /* Free variables */
     gsl_spmatrix_free(D_inv);
@@ -172,7 +185,7 @@ void jacobi(int N_arg, gsl_spmatrix *M, gsl_vector *b, gsl_vector *x){
     gsl_vector_free(r);
     gsl_vector_free(x_prev);
 
-    std::cout << "hello from the beggining of jacobi" << "\n";
+    return 0;
 }
 
 
@@ -203,10 +216,8 @@ end
 
 */
 
-int jacobi_element_based(int N_arg, gsl_spmatrix *M, gsl_vector *b, gsl_vector *x){
-    /* Some variables */
-    const size_t N = N_arg;                                     /* number of grid points */
-    const size_t n = N-2;                                       /* subtract 2 to exclude boundaries */
+int jacobi_element_based(int size_of_system, gsl_spmatrix *M, gsl_vector *b, gsl_vector *x){
+    const size_t n = size_of_system;                                       /* The size of the system */
 
     /* Allocate memory for x_prev*/
     gsl_vector *x_prev  = gsl_vector_alloc(n);       /* used for iteration */
@@ -305,10 +316,11 @@ algorithm Gauss–Seidel method is
 
 */
 
-int iteration_element_based(int N_arg, gsl_spmatrix *M, gsl_vector *b, gsl_vector *x, bool jacOrGS){
-    /* Some variables */
-    const size_t N = N_arg;                                     /* number of grid points */
-    const size_t n = N-2;                                       /* subtract 2 to exclude boundaries */
+int iteration_element_based(int size_of_system, gsl_spmatrix *M, gsl_vector *b, gsl_vector *x, bool jacOrGS){
+    std::cout << " Starting iteration solver: " << "\n";
+
+    /* Size of the system */
+    const size_t n = size_of_system;                                      
 
     /* Allocate memory for x_prev*/
     gsl_vector *x_prev  = gsl_vector_alloc(n);       /* used for iteration */
@@ -389,8 +401,23 @@ int iteration_element_based(int N_arg, gsl_spmatrix *M, gsl_vector *b, gsl_vecto
     // Print x
     for (i = 0; i < n; i++)
     {
-        std::cout << "x_" << i << "=" << gsl_vector_get (x_prev, i) << "\n";
+        std::cout << "x_" << i << "=" << gsl_vector_get (x, i) << "  RHS_" << i << "=" << gsl_vector_get (b, i) << "\n";
     }
+
+    // Compute the error vector
+    gsl_vector_sub(b, x);
+
+    std::cout << "\n";
+
+    // Print error vector
+    for (i = 0; i < n; i++)
+    {
+        std::cout << "error_" << i << "=" << gsl_vector_get (b, i) << "\n";
+    }
+
+    
+    // Print the l2 error
+    std::cout << "\n \n" << "L2 error: " << gsl_blas_dnrm2(b) << "\n \n";
 
     // Free space
     gsl_vector_free(x_prev);
