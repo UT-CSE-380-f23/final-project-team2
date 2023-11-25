@@ -3,21 +3,24 @@
 /*
 ** Default constructor
 */
-FDSolver::FDSolver():FDSolver(0,0,true, 1.0e-6, 1000000){
+FDSolver::FDSolver():FDSolver(0,0,true, 2, 1.0e-6, 1000000){
 }; 
 
 /*
 ** Parametrized constructor
 */
-FDSolver::FDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method):FDSolver(num_nodes, dim, solver_method, 1.0e-6, 1000000){
+FDSolver::FDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method, const size_t& order):FDSolver(num_nodes, dim, solver_method, order, 1.0e-6, 1000000){
 };
 
-FDSolver::FDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method, const double& tol, 
-    const int& max_iter) : num_nodes(num_nodes),dim(dim), solver_method(solver_method), tol(tol), max_iter(max_iter), num_nodes_no_bndry(num_nodes-2){
+FDSolver::FDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method, const size_t& order, const double& tol, 
+    const int& max_iter) : num_nodes(num_nodes),dim(dim), solver_method(solver_method), order(order), tol(tol), max_iter(max_iter), num_nodes_no_bndry(num_nodes-2){
         //Allocate memory for matrix and vector
     this->A = gsl_spmatrix_alloc(this->num_nodes_no_bndry ,this->num_nodes_no_bndry); /* triplet format */
     this->f = gsl_vector_alloc(this->num_nodes_no_bndry);        /* right hand side vector */
     this->u = gsl_vector_alloc(this->num_nodes_no_bndry);        /* solution vector */
+
+    // testing!!
+    std::cout << "Order of the method that we are using: " << order << std::endl;
     if(this->solver_method) // Deciding which solver element to use
         this->solver_function=&FDSolver::jacobi_element;
     else

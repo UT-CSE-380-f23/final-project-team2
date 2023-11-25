@@ -7,6 +7,8 @@ class OneDSolver:public FDSolver{
     public:
         OneDSolver();
         OneDSolver(const size_t& num_nodes, const bool& solver_method);
+        OneDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method, const size_t& order);
+        
         void construct_matrix();
 };
 #endif

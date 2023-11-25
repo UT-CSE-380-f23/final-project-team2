@@ -20,7 +20,7 @@ mode = 0   # Option to run in stadard or debug mode
 [domain]
 
 DIM = 1 # Problem dimension, 1 or 2d
-N = 10        # Mesh Discretization
+N = 12        # Mesh Discretization
 
 # ------------------------------------------------------------------------------
 # Options for how to solve the PDE
@@ -29,7 +29,8 @@ N = 10        # Mesh Discretization
 [solver]
 
 ORDER = 2 # Finite Difference Order to use
-solver = 'jacobi' # Iterative method to use to solve linear system, jacobi or gauss-Seidel
+# BOOLEAN desribing Iterative method to use to solve linear system, jacobi or gauss-Seidel
+solver = 1 # 1 -> Jacobi, 0 -> Gauss-Seidel
 
 # note: could turn into an integer option if we're trying to save as much time as possible,
 # integer comparison is much cheaper than string comparison

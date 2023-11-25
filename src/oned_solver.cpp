@@ -3,9 +3,17 @@
 OneDSolver::OneDSolver():OneDSolver(0,true){
 };
 
-OneDSolver::OneDSolver(const size_t& num_nodes, const bool& solver_method):FDSolver::FDSolver(num_nodes,1,solver_method){
+// default to 1st dimension and 2nd order if nothing else is specified
+OneDSolver::OneDSolver(const size_t& num_nodes, const bool& solver_method):FDSolver::FDSolver(num_nodes,1,solver_method,2){
   std::cout<<"We are constructing oned solver with "<< num_nodes<<std::endl;
 };
+
+OneDSolver::OneDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method, const size_t& order):FDSolver::FDSolver(num_nodes,dim,solver_method,order){
+  std::cout<<"We are constructing oned solver entirely from libgrvy inputs now "<< num_nodes<<std::endl;
+};
+
+//OneDSolver constructor with all options passed from libgrvy
+// ^ TODO
 
 /*
 ** This function creates the matrices and vectors for the 1D mesh

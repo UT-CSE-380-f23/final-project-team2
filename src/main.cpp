@@ -50,12 +50,23 @@ int main(int argc, char *argv[]){
     std::cout << "verify    = " << grvy_parser.verify << std::endl;
     std::cout << "mode      = " << grvy_parser.mode << std::endl;
     std::cout << "N         = " << grvy_parser.N << std::endl;
-    return 0;
-
+    
     //size_t num_nodes = atoi(argv[1]);
     //std::cout<<"We are in main with nodes "<<num_nodes<<std::endl;
     
     // initialize a 1-D solver with the libgrvy parser object
     //OneDSolver sl{num_nodes, false};
     //sl.system_solve(); // Example without libgrvy
+
+    // ideally, we would want to pass the grvy_parser object to this, but I'm going to avoid that for now.
+    // why?: because it would just make the code too complex/require too many changes at this point.
+
+    if (grvy_parser.DIM == 1){
+        std::cout << "solving a system!! " << std::endl;
+        OneDSolver sl{grvy_parser.N, grvy_parser.DIM, grvy_parser.solver, grvy_parser.ORDER};
+        sl.system_solve();
+    } else {
+        std::cout << "You don't have a " << grvy_parser.DIM << " solver implemented yet!" << std::endl;
+    }
+    return 0;
 }
