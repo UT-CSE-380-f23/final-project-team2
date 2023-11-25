@@ -4,10 +4,10 @@
 #CFLAGS_1 = -Wall -I /home/kenneth/soft/gsl-install/include # Compiling
 #CFLAGS_2 = -L /home/kenneth/soft/gsl-install/lib # Linking
 CFLAGS := -std=c++17 -O3
-CFLAGS_1 = -Wall -I$(WORK)/soft/bin/grvy/include -I$(TACC_GSL_INC) # Compiling
-CFLAGS_2 = -L $(WORK)/soft/bin/grvy/lib -L$(TACC_GSL_LIB) # Linking
+CFLAGS_1 = -Wall -I$(WORK)/soft/bin/grvy/include -I$(TACC_GSL_INC) -I$(TACC_HDF5_INC) # Compiling
+CFLAGS_2 = -L $(WORK)/soft/bin/grvy/lib -L$(TACC_GSL_LIB) -L$(TACC_HDF5_LIB) # Linking
 
-CFLAGS_3 = -lgsl -lgslcblas -lm -lgrvy										# Linking
+CFLAGS_3 = -lgsl -lgslcblas -lm -lgrvy -lhdf5 -lz # Linking
 
 all: executable 
 
