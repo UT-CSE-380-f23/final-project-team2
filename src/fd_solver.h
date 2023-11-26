@@ -26,6 +26,7 @@ class FDSolver{
     const size_t num_nodes;
     const size_t num_nodes_no_bndry;
     const size_t dim;
+    const size_t order;
     const bool solver_method; /* Variables used for the Gauss-Seidel iteration */
     const double tol;                   /* solution relative tolerance */
     const int max_iter;                     /* maximum iterations */
@@ -33,8 +34,8 @@ class FDSolver{
     fn_element solver_function;
   public:
     FDSolver();
-    FDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method);
-    FDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method, const double& tol, 
+    FDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method, const size_t& order);
+    FDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method, const size_t& order, const double& tol, 
     const int& max_iter);
     ~FDSolver();
     //void (*solver_method)(const size_t& N, gsl_spmatrix& A, gsl_vector& f, const gsl_vector& u)

@@ -8,10 +8,14 @@
 #include <iostream>
 #include "oned_solver.h"
 //#include <boost/program_options.hpp>
+//#include "parsing.h"
+
+//#include "iterative_methods.h"
+//#include "matrix.h"
 #include "parsing.h"
 
 // variables
-int n_samples;
+//int n_samples;
 //int DIM, ORDER, N, VERIFY;
 //SOLVER, MODE;
 
@@ -34,19 +38,35 @@ int n_samples;
         Option to control standard output mode (e.g. standard vs debug)
 */
 
-int main(int n_args,char *argv[]){
+//int main(int n_args,char *argv[]){
+int main(int argc, char *argv[]){
 
-    size_t num_nodes = atoi(argv[1]);
-    std::cout<<"We are in main with nodes "<<num_nodes<<std::endl;
-    OneDSolver sl{num_nodes, false};
-    sl.system_solve(); // Example without libgrvy
+    GrvyParser grvy_parser(argc,argv);
 
-    GrvyParser grvy_parser(n_args,argv);
+    // can add some tests/checks using this output; need to toggle verification/debug mode vs. normal mode.
 
-    // can add some tests/checks using this output.
-    cout << "Checking variables from main " << endl;
-    cout << "verify    = " << grvy_parser.verify << endl;
-    cout << "mode      = " << grvy_parser.mode << endl;
-    cout << "N         = " << grvy_parser.N << endl;
+    // do this in debug mode
+    std::cout << "Checking variables from main " << std::endl;
+    std::cout << "verify    = " << grvy_parser.verify << std::endl;
+    std::cout << "mode      = " << grvy_parser.mode << std::endl;
+    std::cout << "N         = " << grvy_parser.N << std::endl;
+    
+    //size_t num_nodes = atoi(argv[1]);
+    //std::cout<<"We are in main with nodes "<<num_nodes<<std::endl;
+    
+    // initialize a 1-D solver with the libgrvy parser object
+    //OneDSolver sl{num_nodes, false};
+    //sl.system_solve(); // Example without libgrvy
+
+    // ideally, we would want to pass the grvy_parser object to this, but I'm going to avoid that for now.
+    // why?: because it would just make the code too complex/require too many changes at this point.
+
+    if (grvy_parser.DIM == 1){
+        std::cout << "solving a system!! " << std::endl;
+        OneDSolver sl{grvy_parser.N, grvy_parser.DIM, grvy_parser.solver, grvy_parser.ORDER};
+        sl.system_solve();
+    } else {
+        std::cout << "You don't have a " << grvy_parser.DIM << " solver implemented yet!" << std::endl;
+    }
     return 0;
 }

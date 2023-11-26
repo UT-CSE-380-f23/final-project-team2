@@ -29,6 +29,17 @@ g++ -I $WORK/soft/bin/grvy/include main.cpp -L$WORK/soft/bin/grvy/lib -lgrvy -o 
 
 where `/usr/bin` will be replaced with wherever grvy was installed. On ls6, environment variables for the `include` and `lib` paths might already exist.
 
+### GSL Usage on TACC
+
+To load GSL on TACC and check if it loaded, type
+
+```shell
+module load gsl
+module list
+```
+
+To properly link and compile code that uses gsl, the location of the GSL distribution, libraries, include files, and tools are required. They are `TACC_GSL_DIR`, `TACC_GSL_LIB`, `TACC_GSL_INC` and `TACC_GSL_BIN`, respectively. Including these paths in your Makefile would look something like `$(TACC_GSL_LIB)`
+
 ### Documentation
 We will have a model document, but we will also use docstrings to properly comment and document our code. If time permits, we will use doxygen/sphinx in this effort.
 

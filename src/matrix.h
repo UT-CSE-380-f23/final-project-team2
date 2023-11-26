@@ -22,8 +22,6 @@ One dimension - second order.
 */
 
 void oneDimSecOrd(int N_arg){
-    std::cout << "hello from the beggining of oneDimSecOrd" << "\n";
-
     double k       = 1.0 / (4 * M_PI * M_PI);     /* constant in front of matrix */
     const size_t N = N_arg;                       /* number of grid points */
     const size_t n = N-2;                         /* subtract 2 to exclude boundaries */
@@ -67,14 +65,15 @@ void oneDimSecOrd(int N_arg){
     }
 
     // Solve the system
-    iteration_element_based(N_arg, A, f, u, true);
+    jacobi(n, A, f, u);
+
+    // Print h
+    std::cout << "h: " << h << "\n";
 
     /* Free the space */
     gsl_spmatrix_free(A);
     gsl_vector_free(f);
     gsl_vector_free(u);
-
-    std::cout << "hello from the end of oneDimSecOrd" << "\n";
 }
 
 /*
@@ -83,9 +82,7 @@ One dimension - fourth order.
 
 */
 
-void oneDimFouOrd(int N_arg){
-    std::cout << "hello from the beggining of oneDimFouOrd" << "\n";
-
+void oneDimFouOrd(const int& N_arg){
     double k       = 1.0 / (4 * M_PI * M_PI);     /* constant in front of matrix */
     const size_t N = N_arg;                       /* number of grid points */
     const size_t n = N-2;                         /* subtract 2 to exclude boundaries */
@@ -95,7 +92,6 @@ void oneDimFouOrd(int N_arg){
     std::cout << "grid spacing: " << h  << "\n";
 
     gsl_spmatrix *A = gsl_spmatrix_alloc(n ,n); /* triplet format */
-    gsl_spmatrix *C;                            /* compressed format */
     gsl_vector *f = gsl_vector_alloc(n);        /* right hand side vector */
     gsl_vector *u = gsl_vector_alloc(n);        /* solution vector */
     size_t i;
@@ -152,19 +148,101 @@ void oneDimFouOrd(int N_arg){
       gsl_vector_set(f, i, fi);
     }
 
-    /* convert to compressed column format (May not be needed))*/ 
-    C = gsl_spmatrix_ccs(A); 
-
     // Solve the system
-    iteration_element_based(N_arg, A, f, u, false);
+    iteration_element_based(n, A, f, u, false);
+
+    // Print h
+    std::cout << "h: " << h << "\n";
 
     /* Free the space */
     gsl_spmatrix_free(A);
-    gsl_spmatrix_free(C);
+    gsl_vector_free(f);
+    gsl_vector_free(u);
+}
+
+/*
+
+Two dimension - second order. 
+
+*/
+
+int TwoDimSecOrd(int N_arg){
+    double constant       = 1.0 / (8 * M_PI * M_PI);    /* constant in front of matrix */
+    const size_t N = N_arg;                             /* number of grid points */
+    const size_t k = N-2;                               /* subtract 2 to exclude boundaries */
+    const int    n = k*k;                               /* size of the sytem/matrix */
+
+    std::cout << "size of system: " << n << "\n";
+
+    const double h = 1.0 / (N-1);                 /* grid spacing */
+    
+    // Print the grid spacing:
+    std::cout << "grid spacing: " << h  << "\n";
+
+    gsl_spmatrix *A = gsl_spmatrix_alloc(n ,n); /* triplet format */
+    gsl_vector *f = gsl_vector_alloc(n);        /* right hand side vector */
+    gsl_vector *u = gsl_vector_alloc(n);        /* solution vector */
+
+    /* construct the sparse matrix for the finite difference equation */
+    double xi, yj, f_val;
+
+    for (int i = 0; i < k; i++){
+    for (int j = 0; j < k; j++){
+      // Set the matrix
+      gsl_spmatrix_set(A, i*k+j, i*k+j, -4.0);
+
+      if(i != 0)  {gsl_spmatrix_set(A, i*k+j, (i-1)*k+j, 1.0);}
+      if(i != k-1){gsl_spmatrix_set(A, i*k+j, (i+1)*k+j, 1.0);}
+
+      if(j != 0)  {gsl_spmatrix_set(A, i*k+j, i*k+(j-1), 1.0);}
+      if(j != k-1){gsl_spmatrix_set(A, i*k+j, i*k+(j+1), 1.0);}
+
+      // Set the RHS
+      xi = (i + 1) * h;
+      yj = (j + 1) * h;
+      f_val = sin(2.0 * M_PI * xi)*sin(2.0 * M_PI * yj);
+      gsl_vector_set(f, i*k+j, f_val);
+
+    }
+    }
+
+    
+    /* Print the matrix */
+    /*
+    double val = 0;
+
+    for (int i = 0; i < n; i++){
+    for (int j = 0; j < n; j++){
+      val = gsl_spmatrix_get(A, i, j);
+
+      if (val > 0){
+        std::cout << "+" << val << " ";
+      }else if(val == 0){
+        std::cout << " " << val << " ";
+      }else{
+        std::cout << val << " ";
+      }
+    }
+      std::cout << "=" << gsl_vector_get(f, i) << "\n";
+    }
+    */
+
+    // Scale the matrix
+    gsl_spmatrix_scale(A, (-1.0)*constant/(h*h));
+
+    // Solve the system
+    jacobi(n, A, f, u);
+    // iteration_element_based(n, A, f, u, true);
+
+    // Print h
+    std::cout << "h: " << h << "\n";
+
+    /* Free the space */
+    gsl_spmatrix_free(A);
     gsl_vector_free(f);
     gsl_vector_free(u);
 
-    std::cout << "hello from the end of oneDimFouOrd" << "\n";
+    return 0;
 }
 
 
