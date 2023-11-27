@@ -4,11 +4,11 @@ OneDSolver::OneDSolver():OneDSolver(0,true){
 };
 
 // default to 1st dimension and 2nd order if nothing else is specified
-OneDSolver::OneDSolver(const size_t& num_nodes, const bool& solver_method):FDSolver::FDSolver(num_nodes,1,solver_method,2){
+OneDSolver::OneDSolver(const size_t& num_nodes, const bool& solver_method):FDSolver::FDSolver(num_nodes,1,solver_method,2, 0, 0){
   std::cout<<"We are constructing oned solver with "<< num_nodes<<std::endl;
 };
 
-OneDSolver::OneDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method, const size_t& order):FDSolver::FDSolver(num_nodes,dim,solver_method,order){
+OneDSolver::OneDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method, const size_t& order, const bool& verify, const bool& debug):FDSolver::FDSolver(num_nodes,dim,solver_method,order, verify, debug){
   std::cout<<"We are constructing oned solver entirely from libgrvy inputs now "<< num_nodes<<std::endl;
   /*
   if (order == 2){
