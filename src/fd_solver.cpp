@@ -13,14 +13,14 @@ FDSolver::FDSolver(const size_t& num_nodes, const size_t& dim, const bool& solve
 };
 
 FDSolver::FDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method, const size_t& order, const double& tol, 
-    const int& max_iter) : num_nodes(num_nodes),dim(dim), solver_method(solver_method), order(order), tol(tol), max_iter(max_iter), num_nodes_no_bndry(num_nodes-2){
+    const int& max_iter) : num_nodes(num_nodes),dim(dim), solver_method(solver_method), order(order), tol(tol), max_iter(max_iter), num_nodes_no_bndry(num_nodes-2), matrix_length(std::pow(this->num_nodes_no_bndry, this->dim)){
         //Allocate memory for matrix and vector
-    this->A = gsl_spmatrix_alloc(this->num_nodes_no_bndry ,this->num_nodes_no_bndry); /* triplet format */
-    this->f = gsl_vector_alloc(this->num_nodes_no_bndry);        /* right hand side vector */
-    this->u = gsl_vector_alloc(this->num_nodes_no_bndry);        /* solution vector */
-
     // testing!!
     std::cout << "Order of the method that we are using: " << order << std::endl;
+    this->A = gsl_spmatrix_alloc(this->matrix_length ,this->matrix_length); /* triplet format */
+    this->f = gsl_vector_alloc(this->matrix_length);        /* right hand side vector */
+    this->u = gsl_vector_alloc(this->matrix_length);        /* solution vector */
+
     if(this->solver_method) // Deciding which solver element to use
         this->solver_function=&FDSolver::jacobi_element;
     else
@@ -47,14 +47,14 @@ void FDSolver::system_solve(){//(int N_arg, gsl_spmatrix *M, gsl_vector *b, gsl_
     std::cout<<"Constructed problem, now solving..."<<std::endl;
     int i{0}, j{0}, k{0};
     double sigma{0.0}, residual{10000.00}, prev_residual{residual+1};
-    gsl_vector *u_prev  = gsl_vector_alloc(this->num_nodes_no_bndry);       /* used only for iteration */
+    gsl_vector *u_prev  = gsl_vector_alloc(this->matrix_length);       /* used only for iteration */
     /* initialiaze x at zero*/
     gsl_vector_set_zero(u_prev);
     /* iterate */
     while(this->tol < residual && k < max_iter){
-        for (i=0; i < this->num_nodes_no_bndry; i++){ // need to optimize this to nnz
+        for (i=0; i < this->matrix_length; i++){ // need to optimize this to nnz
             sigma = -gsl_spmatrix_get(this->A, i, i)*(this->*solver_function)(u_prev, i);
-            for (j = 0; j < this->num_nodes_no_bndry; j++)
+            for (j = 0; j < this->matrix_length; j++)
                 sigma = sigma + gsl_spmatrix_get(this->A, i, j)*(this->*solver_function)(u_prev, j);
             gsl_vector_set(this->u, i, (gsl_vector_get(this->f, i) - sigma)/gsl_spmatrix_get(this->A, i, i));
         }
@@ -78,7 +78,7 @@ void FDSolver::system_solve(){//(int N_arg, gsl_spmatrix *M, gsl_vector *b, gsl_
     }
 
     // Print u
-    for (i = 0; i < num_nodes_no_bndry; i++)
+    for (i = 0; i < this->matrix_length; i++)
     {
         std::cout << "u_" << i << "=" << gsl_vector_get(this->u, i) << "\n";
     }

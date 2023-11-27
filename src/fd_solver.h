@@ -1,6 +1,4 @@
-#ifndef MATRIX_H
-#define MATRIX_H
-
+#pragma once
 #include <iostream>
 #include <cmath>
 #include <stdio.h>
@@ -30,6 +28,7 @@ class FDSolver{
     const bool solver_method; /* Variables used for the Gauss-Seidel iteration */
     const double tol;                   /* solution relative tolerance */
     const int max_iter;                     /* maximum iterations */
+    const size_t matrix_length;
     typedef const double (FDSolver::*fn_element)(const gsl_vector*, const int&); // This is pointer to function for  defining element
     fn_element solver_function;
   public:
@@ -45,5 +44,3 @@ class FDSolver{
     const double jacobi_element(const gsl_vector* u_prev, const int& j);
     const double gauss_sidel_element(const gsl_vector* u_prev, const int& j);
 };
-
-#endif
