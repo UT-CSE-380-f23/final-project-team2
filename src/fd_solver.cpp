@@ -42,7 +42,7 @@ const double FDSolver::gauss_sidel_element(const gsl_vector* u_prev, const int& 
 
 void FDSolver::system_solve(){//(int N_arg, gsl_spmatrix *M, gsl_vector *b, gsl_vector *x, bool jacOrGS){
     /* Some variables */
-    this->construct_matrix(this->order); // Construct A, f, u
+    this->construct_matrix(); // Construct A, f, u
     // Iteration variables
     std::cout<<"Constructed problem, now solving..."<<std::endl;
     int i{0}, j{0}, k{0};

@@ -27,7 +27,7 @@ OneDSolver::OneDSolver(const size_t& num_nodes, const size_t& dim, const bool& s
 /*
 ** This function creates the matrices and vectors for the 1D mesh
 */
-void OneDSolver::construct_matrix(const size_t& order){
+void OneDSolver::construct_matrix(){
 
     const double h = 1.0 / (this->num_nodes-1);                 /* grid spacing */
     // Print the grid spacing:
@@ -38,7 +38,7 @@ void OneDSolver::construct_matrix(const size_t& order){
 
     // change the method used based on the order of the system
     // might want to make this a function? not sure what is best
-    if (order == 2){
+    if (this->order == 2){
       /* construct first row */
       gsl_spmatrix_set(this->A, 0, 0, -2.0);
       gsl_spmatrix_set(this->A, 0, 1, 1.0);
@@ -58,7 +58,7 @@ void OneDSolver::construct_matrix(const size_t& order){
       /* scale by h^2 */
       gsl_spmatrix_scale(A, -1.0 * scaling_constant / (h * h));
     }
-    else if (order == 4){
+    else if (this->order == 4){
       /* construct first row */
       gsl_spmatrix_set(this->A, 0, 0, -24.0);
       gsl_spmatrix_set(this->A, 0, 1, 12.0);
