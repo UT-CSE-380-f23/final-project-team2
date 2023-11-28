@@ -4,7 +4,11 @@ OneDSolver::OneDSolver():OneDSolver(0,true){
 };
 
 // default to 1st dimension and 2nd order if nothing else is specified
-OneDSolver::OneDSolver(const size_t& num_nodes, const bool& solver_method):FDSolver::FDSolver(num_nodes,1,solver_method,2, 0, 0){
+OneDSolver::OneDSolver(const size_t& num_nodes, const bool& solver_method):FDSolver::FDSolver(num_nodes,1,solver_method,2){
+  std::cout<<"We are constructing oned solver with "<< num_nodes<<std::endl;
+};
+// including call without specification of verification and debug modes to allow for backward compatibility
+OneDSolver::OneDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method,const size_t& order):FDSolver::FDSolver(num_nodes,dim,solver_method,order, 0, 0){
   std::cout<<"We are constructing oned solver with "<< num_nodes<<std::endl;
 };
 
@@ -27,7 +31,7 @@ OneDSolver::OneDSolver(const size_t& num_nodes, const size_t& dim, const bool& s
 /*
 ** This function creates the matrices and vectors for the 1D mesh
 */
-void OneDSolver::construct_matrix(const size_t& order){
+void OneDSolver::construct_matrix(){
 
     const double h = 1.0 / (this->num_nodes-1);                 /* grid spacing */
     // Print the grid spacing:
@@ -38,7 +42,7 @@ void OneDSolver::construct_matrix(const size_t& order){
 
     // change the method used based on the order of the system
     // might want to make this a function? not sure what is best
-    if (order == 2){
+    if (this->order == 2){
       /* construct first row */
       gsl_spmatrix_set(this->A, 0, 0, -2.0);
       gsl_spmatrix_set(this->A, 0, 1, 1.0);
@@ -58,7 +62,7 @@ void OneDSolver::construct_matrix(const size_t& order){
       /* scale by h^2 */
       gsl_spmatrix_scale(A, -1.0 * scaling_constant / (h * h));
     }
-    else if (order == 4){
+    else if (this->order == 4){
       /* construct first row */
       gsl_spmatrix_set(this->A, 0, 0, -24.0);
       gsl_spmatrix_set(this->A, 0, 1, 12.0);

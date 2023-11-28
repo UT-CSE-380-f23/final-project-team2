@@ -7,6 +7,7 @@
 #include <cmath>
 #include <iostream>
 #include "oned_solver.h"
+#include "twod_solver.h"
 //#include <boost/program_options.hpp>
 //#include "parsing.h"
 
@@ -65,7 +66,12 @@ int main(int argc, char *argv[]){
         std::cout << "solving a system!! " << std::endl;
         OneDSolver sl{grvy_parser.N, grvy_parser.DIM, grvy_parser.solver, grvy_parser.ORDER, grvy_parser.verify, grvy_parser.mode};
         sl.system_solve();
-    } else {
+    } else if (grvy_parser.DIM == 2){
+        std::cout << "solving a system in 2D!! " << std::endl;
+        TwoDSolver sl{grvy_parser.N, grvy_parser.DIM, grvy_parser.solver, grvy_parser.ORDER, grvy_parser.verify, grvy_parser.mode};
+        sl.system_solve();
+    }
+    else {
         std::cout << "You don't have a " << grvy_parser.DIM << " solver implemented yet!" << std::endl;
     }
     return 0;
