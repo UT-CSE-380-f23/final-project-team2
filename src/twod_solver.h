@@ -7,5 +7,6 @@ class TwoDSolver:public FDSolver{
         TwoDSolver();
         TwoDSolver(const size_t& num_nodes, const bool& solver_method);
         TwoDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method, const size_t& order);
+        TwoDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method, const size_t& order,const bool& verify, const bool& debug);
         void construct_matrix();
 };

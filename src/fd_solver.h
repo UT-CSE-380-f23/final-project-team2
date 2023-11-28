@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <fstream>
 
 #include <gsl/gsl_integration.h>
 #include <gsl/gsl_math.h>
@@ -36,6 +37,7 @@ class FDSolver{
   public:
     FDSolver();
     FDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method, const size_t& order);
+    FDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method, const size_t& order, const bool& verify, const bool& debug);
     FDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method, const size_t& order, const bool& verify, const bool& debug, const double& tol, 
     const int& max_iter);
     ~FDSolver();
@@ -47,5 +49,6 @@ class FDSolver{
     const double jacobi_element(const gsl_vector* u_prev, const int& j);
     const double gauss_sidel_element(const gsl_vector* u_prev, const int& j);
     const std::string solver_method_to_string();
+    const float output_L2_norm();
 
 };

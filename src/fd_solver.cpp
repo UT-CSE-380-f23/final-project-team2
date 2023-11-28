@@ -12,8 +12,14 @@ FDSolver::FDSolver():FDSolver(0,0,true, 2, 0, 0, 1.0e-6, 1000000){
 FDSolver::FDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method, const size_t& order):FDSolver(num_nodes, dim, solver_method, order, 0, 0, 1.0e-6, 1000000){
 };
 
+/*
+** Another Parametrized constructor
+*/
+FDSolver::FDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method, const size_t& order, const bool& verify, const bool& debug):FDSolver(num_nodes, dim, solver_method, order, verify, debug, 1.0e-6, 1000000){
+};
+
 FDSolver::FDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method, const size_t& order, const bool& verify, const bool& debug, const double& tol, 
-    const int& max_iter) : num_nodes(num_nodes),dim(dim), solver_method(solver_method), order(order), tol(tol), max_iter(max_iter), num_nodes_no_bndry(num_nodes-2), matrix_length(std::pow(this->num_nodes_no_bndry, this->dim)){
+    const int& max_iter) : num_nodes(num_nodes),dim(dim), solver_method(solver_method), order(order), verify(verify), debug(debug), tol(tol), max_iter(max_iter), num_nodes_no_bndry(num_nodes-2), matrix_length(std::pow(this->num_nodes_no_bndry, this->dim)){
         //Allocate memory for matrix and vector
     // testing!!
     std::cout << "Order of the method that we are using: " << order << std::endl;
@@ -47,7 +53,7 @@ const double FDSolver::gauss_sidel_element(const gsl_vector* u_prev, const int& 
 const std::string FDSolver::solver_method_to_string(){
     int solver_method_int = static_cast<int>(this->solver_method);
 
-    if (this->solver_method_int){
+    if (solver_method_int){
         return "Jacobi";
     } else {
         return "Gauss-Seidel";
@@ -55,20 +61,18 @@ const std::string FDSolver::solver_method_to_string(){
 }
 
 const float FDSolver::output_L2_norm(){
-    // f is the input, for the manufactured solution, input == solution
+
+    // f is the input, for the manufactured solution, input == solution...compute error
     gsl_vector_sub(this->f, this->u);
 
     // open output file
-    ofstream outfile;
-    outfile.open ("example.txt");
-    outfile << "Writing this to a file.\n";
+    std::ofstream outfile;
+    outfile.open("../output/" + solver_method_to_string() + "_" + std::to_string(this->dim) + "D_" + std::to_string(this->order) + "_order_N_" + std::to_string(this->num_nodes));
+    // compute L2 norm of the difference and output to outfile
+    outfile << gsl_blas_dnrm2(this->f);
     outfile.close();
+    std::cout << "aaaaaa" << std::endl;
     return 0;
-
-    // compute L2 norm of the difference and output to a file
-    gsl_blas_dnrm2(this->f) << "../output/" + solver_method_to_string() + "_" + std::to_string(this->dim) + "D_" std::to_string(this->order) + "_order";
-    
-    // maybe print the L2 norm to the screen in debug mode
 
 }
 
@@ -117,6 +121,7 @@ void FDSolver::system_solve(){//(int N_arg, gsl_spmatrix *M, gsl_vector *b, gsl_
 
     // Compute L2 Norm of the solution if we are in verification mode - perhaps turn this into a method
     if (this->verify){
+        std::cout << "saving L2 norm" << std::endl;
         this->output_L2_norm();
     }
 
