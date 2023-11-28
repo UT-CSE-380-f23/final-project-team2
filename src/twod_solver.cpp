@@ -12,6 +12,10 @@ TwoDSolver::TwoDSolver(const size_t& num_nodes, const size_t& dim, const bool& s
     std::cout<<"We are constructing oned solver entirely from libgrvy inputs now "<< num_nodes<<std::endl;
 };
 
+TwoDSolver::TwoDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method, const size_t& order,const bool& verify, const bool& debug):FDSolver::FDSolver(num_nodes,dim,solver_method,order,verify,debug, 9*num_nodes*num_nodes){
+    std::cout<<"We are constructing oned solver entirely from libgrvy inputs now "<< num_nodes<<std::endl;
+};
+
 //TwoDSolver constructor with all options passed from libgrvy
 // ^ TODO
 
