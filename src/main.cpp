@@ -9,7 +9,7 @@
 #include "oned_solver.h"
 #include "twod_solver.h"
 //#include <boost/program_options.hpp>
-//#include "parsing.h"
+// #include "parsing.h"
 
 //#include "iterative_methods.h"
 //#include "matrix.h"
@@ -52,18 +52,18 @@ int main(int argc, char *argv[]){
     std::cout << "mode      = " << grvy_parser.mode << std::endl;
     std::cout << "N         = " << grvy_parser.N << std::endl;
     
-    //size_t num_nodes = atoi(argv[1]);
+    // size_t num_nodes = atoi(argv[1]);
     //std::cout<<"We are in main with nodes "<<num_nodes<<std::endl;
     
     // initialize a 1-D solver with the libgrvy parser object
-    //OneDSolver sl{num_nodes, false};
-    //sl.system_solve(); // Example without libgrvy
+    // OneDSolver sl{num_nodes, false};
+    // sl.system_solve(); // Example without libgrvy
 
     // ideally, we would want to pass the grvy_parser object to this, but I'm going to avoid that for now.
     // why?: because it would just make the code too complex/require too many changes at this point.
 
     if (grvy_parser.DIM == 1){
-        std::cout << "solving a system!! " << std::endl;
+        std::cout << "solving a system in 1D!! " << std::endl;
         OneDSolver sl{grvy_parser.N, grvy_parser.DIM, grvy_parser.solver, grvy_parser.ORDER, grvy_parser.verify, grvy_parser.mode};
         sl.system_solve();
     } else if (grvy_parser.DIM == 2){

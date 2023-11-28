@@ -3,27 +3,24 @@
 /*
 ** Default constructor
 */
-FDSolver::FDSolver():FDSolver(0,0,true, 2, 0, 0, 1.0e-6, 1000000){
+FDSolver::FDSolver():FDSolver(0,0,true, 2, 0, 0, 0, 1.0e-12, 1000000){
 }; 
 
 /*
 ** Parametrized constructor
 */
-FDSolver::FDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method, const size_t& order):FDSolver(num_nodes, dim, solver_method, order, 0, 0, 1.0e-6, 1000000){
+FDSolver::FDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method, const size_t& order, const int& nnz):FDSolver(num_nodes, dim, solver_method, order, nnz, 1.0e-12, 1000000){
 };
 
-/*
-** Another Parametrized constructor
-*/
-FDSolver::FDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method, const size_t& order, const bool& verify, const bool& debug):FDSolver(num_nodes, dim, solver_method, order, verify, debug, 1.0e-6, 1000000){
+FDSolver::FDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method, const size_t& order, const bool& verify, const bool& debug, const int& nnz):FDSolver(num_nodes, dim, solver_method, order, verify, debug, nnz, 1.0e-12, 1000000){
 };
 
-FDSolver::FDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method, const size_t& order, const bool& verify, const bool& debug, const double& tol, 
-    const int& max_iter) : num_nodes(num_nodes),dim(dim), solver_method(solver_method), order(order), verify(verify), debug(debug), tol(tol), max_iter(max_iter), num_nodes_no_bndry(num_nodes-2), matrix_length(std::pow(this->num_nodes_no_bndry, this->dim)){
+FDSolver::FDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method, const size_t& order, const bool& verify, const bool& debug, const int& nnz, const double& tol, 
+    const int& max_iter) : num_nodes(num_nodes),dim(dim), solver_method(solver_method), order(order), verify(verify), debug(debug), tol(tol), max_iter(max_iter), num_nodes_no_bndry(num_nodes-2), matrix_length(std::pow(this->num_nodes_no_bndry, this->dim)), nnz(nnz){
         //Allocate memory for matrix and vector
     // testing!!
     std::cout << "Order of the method that we are using: " << order << std::endl;
-    this->A = gsl_spmatrix_alloc(this->matrix_length ,this->matrix_length); /* triplet format */
+    this->A = gsl_spmatrix_alloc_nzmax(this->matrix_length ,this->matrix_length, this->nnz, GSL_SPMATRIX_CSR); /* triplet format */
     this->f = gsl_vector_alloc(this->matrix_length);        /* right hand side vector */
     this->u = gsl_vector_alloc(this->matrix_length);        /* solution vector */
 
@@ -39,10 +36,10 @@ FDSolver::~FDSolver(){ // Free memory for A, u, f
     gsl_spmatrix_free(this->A);
 };
 
-const double FDSolver::jacobi_element(const gsl_vector* u_prev, const int& j){
+inline const double FDSolver::jacobi_element(const gsl_vector* u_prev, const int& j){
     return gsl_vector_get(u_prev, j);
 };
-const double FDSolver::gauss_sidel_element(const gsl_vector* u_prev, const int& j){
+inline const double FDSolver::gauss_sidel_element(const gsl_vector* u_prev, const int& j){
     return gsl_vector_get(this->u, j);
 };
 
@@ -83,34 +80,45 @@ const float FDSolver::output_L2_norm(){
 void FDSolver::system_solve(){//(int N_arg, gsl_spmatrix *M, gsl_vector *b, gsl_vector *x, bool jacOrGS){
     /* Some variables */
     this->construct_matrix(); // Construct A, f, u
+    this->iterative_solve(); // Solve Au = f iteratively
+}
+void FDSolver::iterative_solve()
+{
+    std::cout << "Constructed problem, now solving..." << std::endl;
     // Iteration variables
-    std::cout<<"Constructed problem, now solving..."<<std::endl;
-    int i{0}, j{0}, k{0};
-    double sigma{0.0}, residual{10000.00}, prev_residual{residual+1};
-    gsl_vector *u_prev  = gsl_vector_alloc(this->matrix_length);       /* used only for iteration */
+    int row_idx{0}, i{0}, j{0}, k{0};
+    double sigma{0}, residual{10000.00}, prev_residual{residual + 1}, Aii{0.0};
+    gsl_vector *u_prev = gsl_vector_alloc(this->matrix_length); /* used only for iteration */
     /* initialiaze x at zero*/
     gsl_vector_set_zero(u_prev);
     /* iterate */
-    while(this->tol < residual && k < max_iter){
-        for (i=0; i < this->matrix_length; i++){ // need to optimize this to nnz
-            sigma = -gsl_spmatrix_get(this->A, i, i)*(this->*solver_function)(u_prev, i);
-            for (j = 0; j < this->matrix_length; j++)
-                sigma = sigma + gsl_spmatrix_get(this->A, i, j)*(this->*solver_function)(u_prev, j);
-            gsl_vector_set(this->u, i, (gsl_vector_get(this->f, i) - sigma)/gsl_spmatrix_get(this->A, i, i));
+    const int nnz = this->A->nz;
+    const int *row_idx_arr{this->A->p};
+    const int *col_idx_arr{this->A->i};
+    const double *data_A{this->A->data};
+    printf("matrix is '%s' format.\n", gsl_spmatrix_type(this->A));
+    while (this->tol < residual && k < max_iter)
+    {
+        for (row_idx = 0; row_idx < this->matrix_length; row_idx++)
+        {
+            Aii = gsl_spmatrix_get(this->A, row_idx, row_idx);
+            sigma = -Aii * (this->*solver_function)(u_prev, row_idx);
+            for (j = row_idx_arr[row_idx]; j < row_idx_arr[row_idx + 1]; j++)
+                sigma += data_A[j] * (this->*solver_function)(u_prev, col_idx_arr[j]);
+            gsl_vector_set(this->u, row_idx, (gsl_vector_get(this->f, row_idx) - sigma) / Aii);
         }
         // Update the residual and print it
         gsl_vector_sub(u_prev, this->u);
         residual = gsl_blas_dnrm2(u_prev);
-        
-        // only print residual in debug mode
-        std::cout << "residual: " << residual << "\n";
+        // std::cout << "residual: " << residual << "\n";
 
         // Make a copy of x into x_prev for the following iteration
         gsl_vector_memcpy(u_prev, this->u);
 
         // Only continue if the resiudal is decreasing
-        if (prev_residual <= residual){
-            std::printf("Residual did not decrese for %d th iteration, was %f is now %f", k, prev_residual, residual);
+        if (prev_residual <= residual)
+        {
+            std::printf("Residual did not decrease for %d th iteration, was %f is now %f", k, prev_residual, residual);
             break;
         }
 
@@ -136,6 +144,5 @@ void FDSolver::system_solve(){//(int N_arg, gsl_spmatrix *M, gsl_vector *b, gsl_
     // Free space
     gsl_vector_free(u_prev);
 };
-
 
 // #endif // ITERATIVE_METHODS_H
