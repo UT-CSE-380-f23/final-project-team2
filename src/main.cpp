@@ -39,7 +39,6 @@
         Option to control standard output mode (e.g. standard vs debug)
 */
 
-//int main(int n_args,char *argv[]){
 int main(int argc, char *argv[]){
 
     GrvyParser grvy_parser(argc,argv);
@@ -47,10 +46,14 @@ int main(int argc, char *argv[]){
     // can add some tests/checks using this output; need to toggle verification/debug mode vs. normal mode.
 
     // do this in debug mode
-    std::cout << "Checking variables from main " << std::endl;
-    std::cout << "verify    = " << grvy_parser.verify << std::endl;
-    std::cout << "mode      = " << grvy_parser.mode << std::endl;
-    std::cout << "N         = " << grvy_parser.N << std::endl;
+    if(grvy_parser.mode==true)
+    {
+        std::cout << "Checking variables from main " << std::endl;
+        std::cout << "verify    = " << grvy_parser.verify << std::endl;
+        std::cout << "mode      = " << grvy_parser.mode << std::endl;
+        std::cout << "N         = " << grvy_parser.N << std::endl;
+        // Adding verbosity for debug mode
+    }
     
     // size_t num_nodes = atoi(argv[1]);
     //std::cout<<"We are in main with nodes "<<num_nodes<<std::endl;
@@ -61,18 +64,22 @@ int main(int argc, char *argv[]){
 
     // ideally, we would want to pass the grvy_parser object to this, but I'm going to avoid that for now.
     // why?: because it would just make the code too complex/require too many changes at this point.
-
-    if (grvy_parser.DIM == 1){
-        std::cout << "solving a system in 1D!! " << std::endl;
-        OneDSolver sl{grvy_parser.N, grvy_parser.DIM, grvy_parser.solver, grvy_parser.ORDER, grvy_parser.verify, grvy_parser.mode};
-        sl.system_solve();
-    } else if (grvy_parser.DIM == 2){
-        std::cout << "solving a system in 2D!! " << std::endl;
-        TwoDSolver sl{grvy_parser.N, grvy_parser.DIM, grvy_parser.solver, grvy_parser.ORDER, grvy_parser.verify, grvy_parser.mode};
-        sl.system_solve();
-    }
-    else {
-        std::cout << "You don't have a " << grvy_parser.DIM << " solver implemented yet!" << std::endl;
+    if(grvy_parser.N < 4)
+        std::cout << "num_nodes too low!"<<std::endl;
+    else
+    {
+        if (grvy_parser.DIM == 1){
+            std::cout << "solving a system in 1D!! " << std::endl;
+            OneDSolver sl{grvy_parser.N, grvy_parser.DIM, grvy_parser.solver, grvy_parser.ORDER, grvy_parser.verify, grvy_parser.mode};
+            sl.system_solve();
+        } else if (grvy_parser.DIM == 2){
+            std::cout << "solving a system in 2D!! " << std::endl;
+            TwoDSolver sl{grvy_parser.N, grvy_parser.DIM, grvy_parser.solver, grvy_parser.ORDER, grvy_parser.verify, grvy_parser.mode};
+            sl.system_solve();
+        }
+        else {
+            std::cout << "You don't have a " << grvy_parser.DIM << "D solver implemented yet!" << std::endl;
+        }
     }
     return 0;
 }

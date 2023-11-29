@@ -8,11 +8,11 @@ TwoDSolver::TwoDSolver(const size_t& num_nodes, const bool& solver_method):FDSol
     std::cout<<"We are constructing oned solver with "<< num_nodes<<std::endl;
 };
 
-TwoDSolver::TwoDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method, const size_t& order):FDSolver::FDSolver(num_nodes,dim,solver_method,order, 9*num_nodes*num_nodes){
+TwoDSolver::TwoDSolver(const size_t& num_nodes, const int& dim, const bool& solver_method, const int& order):FDSolver::FDSolver(num_nodes,dim,solver_method,order, 9*num_nodes*num_nodes){
     std::cout<<"We are constructing oned solver entirely from libgrvy inputs now "<< num_nodes<<std::endl;
 };
 
-TwoDSolver::TwoDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method, const size_t& order,const bool& verify, const bool& debug):FDSolver::FDSolver(num_nodes,dim,solver_method,order,verify,debug, 9*num_nodes*num_nodes){
+TwoDSolver::TwoDSolver(const size_t& num_nodes, const int& dim, const bool& solver_method, const int& order,const bool& verify, const bool& debug):FDSolver::FDSolver(num_nodes,dim,solver_method,order,verify,debug, 9*num_nodes*num_nodes){
     std::cout<<"We are constructing oned solver entirely from libgrvy inputs now "<< num_nodes<<std::endl;
 };
 
