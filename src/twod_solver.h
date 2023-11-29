@@ -5,7 +5,7 @@
 ** and constructors that help initialize the FD Solver class
 */
 
-inline constexpr double scaling_constant_2d = 1.0 / (8.0 * M_PI * M_PI); ;
+constexpr double scaling_constant_2d = 1.0 / (8.0 * M_PI * M_PI); ;
 class TwoDSolver:public FDSolver{
     public:
         TwoDSolver();
