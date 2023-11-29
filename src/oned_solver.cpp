@@ -8,11 +8,11 @@ OneDSolver::OneDSolver(const size_t& num_nodes, const bool& solver_method):FDSol
   std::cout<<"We are constructing oned solver with "<< num_nodes<<std::endl;
 };
 // including call without specification of verification and debug modes to allow for backward compatibility
-OneDSolver::OneDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method,const size_t& order):FDSolver::FDSolver(num_nodes,dim,solver_method,order, 0, 0,3*num_nodes){
+OneDSolver::OneDSolver(const size_t& num_nodes, const int& dim, const bool& solver_method,const int& order):FDSolver::FDSolver(num_nodes,dim,solver_method,order, 0, 0,3*num_nodes){
   std::cout<<"We are constructing oned solver with "<< num_nodes<<std::endl;
 };
 
-OneDSolver::OneDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method, const size_t& order, const bool& verify, const bool& debug):FDSolver::FDSolver(num_nodes,dim,solver_method,order, verify, debug, 3*num_nodes){
+OneDSolver::OneDSolver(const size_t& num_nodes, const int& dim, const bool& solver_method, const int& order, const bool& verify, const bool& debug):FDSolver::FDSolver(num_nodes,dim,solver_method,order, verify, debug, 3*num_nodes){
   std::cout<<"We are constructing oned solver entirely from libgrvy inputs now "<< num_nodes<<std::endl;
   /*
   if (order == 2){

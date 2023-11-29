@@ -26,7 +26,7 @@ GrvyParser::GrvyParser(int argc, char **argv){
         printf("--> %-11s = %i\n","mode",mode);
  
     // Read in domain variables
-    if( iparse.Read_Var("domain/N",&N,3) )
+    if( iparse.Read_Var("domain/N",&N) )
         printf("--> %-11s = %i\n","N",N);
  
     if( iparse.Read_Var("domain/DIM",&DIM,1) )
