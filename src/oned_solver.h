@@ -1,7 +1,7 @@
 #pragma once
 #include "fd_solver.h"
 
-inline constexpr double scaling_constant = 1.0 / (4 * M_PI * M_PI);
+constexpr double scaling_constant = 1.0 / (4 * M_PI * M_PI);
 class OneDSolver:public FDSolver{
     public:
         OneDSolver();
