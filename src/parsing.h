@@ -27,9 +27,9 @@
 class GrvyParser {
     public:
         //std::string solver;
-        int N, DIM, ORDER;
-        int verify, mode;
-        bool solver;
+        int N;
+        int DIM, ORDER;
+        bool verify, mode, solver;
 
         // the constructor!
         GrvyParser(int argc, char **argv);

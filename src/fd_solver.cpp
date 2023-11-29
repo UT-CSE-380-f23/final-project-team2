@@ -9,14 +9,14 @@ FDSolver::FDSolver():FDSolver(0,0,true, 2, 0, 0, 0, 1.0e-12, 1000000){
 /*
 ** Parametrized constructor
 */
-FDSolver::FDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method, const size_t& order, const int& nnz):FDSolver(num_nodes, dim, solver_method, order, nnz, 1.0e-12, 1000000){
+FDSolver::FDSolver(const size_t& num_nodes, const int& dim, const bool& solver_method, const int& order, const size_t& nnz):FDSolver(num_nodes, dim, solver_method, order, nnz, 1.0e-12, 1000000){
 };
 
-FDSolver::FDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method, const size_t& order, const bool& verify, const bool& debug, const int& nnz):FDSolver(num_nodes, dim, solver_method, order, verify, debug, nnz, 1.0e-12, 1000000){
+FDSolver::FDSolver(const size_t& num_nodes, const int& dim, const bool& solver_method, const int& order, const bool& verify, const bool& debug, const size_t& nnz):FDSolver(num_nodes, dim, solver_method, order, verify, debug, nnz, 1.0e-12, 1000000){
 };
 
-FDSolver::FDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method, const size_t& order, const bool& verify, const bool& debug, const int& nnz, const double& tol, 
-    const int& max_iter) : num_nodes(num_nodes),dim(dim), solver_method(solver_method), order(order), verify(verify), debug(debug), tol(tol), max_iter(max_iter), num_nodes_no_bndry(num_nodes-2), matrix_length(std::pow(this->num_nodes_no_bndry, this->dim)), nnz(nnz){
+FDSolver::FDSolver(const size_t& num_nodes, const int& dim, const bool& solver_method, const int& order, const bool& verify, const bool& debug, const size_t& nnz, const double& tol, 
+    const size_t& max_iter) : num_nodes(num_nodes),dim(dim), solver_method(solver_method), order(order), verify(verify), debug(debug), tol(tol), max_iter(max_iter), num_nodes_no_bndry(num_nodes-2), matrix_length(std::pow(this->num_nodes_no_bndry, this->dim)), nnz(nnz){
         //Allocate memory for matrix and vector
     // testing!!
     std::cout << "Order of the method that we are using: " << order << std::endl;
@@ -57,7 +57,7 @@ const std::string FDSolver::solver_method_to_string(){
     }
 }
 
-const float FDSolver::output_L2_norm(){
+void FDSolver::output_L2_norm(){
 
     // f is the input, for the manufactured solution, input == solution...compute error
     gsl_vector_sub(this->f, this->u);
@@ -66,11 +66,11 @@ const float FDSolver::output_L2_norm(){
     std::ofstream outfile;
     outfile.open("../output/" + solver_method_to_string() + "_" + std::to_string(this->dim) + "D_" + std::to_string(this->order) + "_order_N_" + std::to_string(this->num_nodes));
     // compute L2 norm of the difference and output to outfile
-    outfile << gsl_blas_dnrm2(this->f);
+    double l2norm{gsl_blas_dnrm2(this->f)};
+    std::cout<<"L2 norm of the error : "<<l2norm<<std::endl;
+    outfile<<l2norm;
     outfile.close();
-    std::cout << "aaaaaa" << std::endl;
-    return 0;
-
+    std::cout << "Done outputing to file" << std::endl;
 }
 
 /*

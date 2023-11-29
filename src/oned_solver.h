@@ -6,7 +6,7 @@ class OneDSolver:public FDSolver{
     public:
         OneDSolver();
         OneDSolver(const size_t& num_nodes, const bool& solver_method);
-        OneDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method, const size_t& order);
-        OneDSolver(const size_t& num_nodes, const size_t& dim, const bool& solver_method, const size_t& order,const bool& verify, const bool& debug);
+        OneDSolver(const size_t& num_nodes, const int& dim, const bool& solver_method, const int& order);
+        OneDSolver(const size_t& num_nodes, const int& dim, const bool& solver_method, const int& order,const bool& verify, const bool& debug);
         void construct_matrix();
 };
