@@ -10,7 +10,7 @@
 # Generic modes/options, defined globally
 # ------------------------------------------------------------------------------
 
-verify = 1 # Option to run in verification mode
+verify = 0 # Option to run in verification mode
 mode = 0   # Option to run in stadard or debug mode
 
 # ------------------------------------------------------------------------------
@@ -19,7 +19,7 @@ mode = 0   # Option to run in stadard or debug mode
 
 [domain]
 
-DIM = 1 # Problem dimension, 1 or 2d
+DIM = 2 # Problem dimension, 1 or 2d
 N = 100        # Mesh Discretization
 
 # ------------------------------------------------------------------------------
@@ -28,7 +28,7 @@ N = 100        # Mesh Discretization
 
 [solver]
 
-ORDER = 4 # Finite Difference Order to use
+ORDER = 3 # Finite Difference Order to use
 # BOOLEAN desribing Iterative method to use to solve linear system, jacobi or gauss-Seidel
 solver = 0 # 1 -> Jacobi, 0 -> Gauss-Seidel
 

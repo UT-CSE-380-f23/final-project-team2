@@ -63,8 +63,10 @@ int main(int argc, char *argv[]){
 
     // ideally, we would want to pass the grvy_parser object to this, but I'm going to avoid that for now.
     // why?: because it would just make the code too complex/require too many changes at this point.
-    if(grvy_parser.N < 4)
+    if(grvy_parser.N < 4){
         std::cout << "num_nodes too low!"<<std::endl;
+        exit(1);
+    }
     else
     {
         if (grvy_parser.DIM == 1){
@@ -78,6 +80,8 @@ int main(int argc, char *argv[]){
         }
         else {
             std::cout << "You don't have a " << grvy_parser.DIM << "D solver implemented yet!" << std::endl;
+            exit(1);
+
         }
     }
     return 0;
