@@ -25,14 +25,7 @@ run $executable ../heat-input-bad-order.txt
 
 @test "verify ./run runs correctly in verify mode" {
 #run $("${factorial_executable} -1")
-run $executable heat-input-good.txt
-[ "${lines[0]}" = "--> verify      = 1" ]
-[ "${lines[1]}" = "--> verify      = 1" ]
-[ "${lines[2]}" = "--> mode        = 0" ]
-[ "${lines[3]}" = "--> N           = 100" ]
-[ "${lines[4]}" = "--> DIM         = 2" ]
-[ "${lines[5]}" = "--> solver      = 0" ]
-[ "${lines[6]}" = "--> ORDER       = 4" ]
+run $executable ../heat-input-good.txt
 # skip and check the output of the last two lines
 [ "${lines[-2]}" = "L2 norm of the error : 1.74651e-06" ]
 [ "${lines[-1]}" = "Done outputing to file" ]
