@@ -40,9 +40,8 @@
 */
 
 int main(int argc, char *argv[]){
-
-    GrvyParser grvy_parser(argc,argv);
-
+    GrvyParser grvy_parser(argv[1]); // To take input file as an argument
+    grvy_parser.parse(); // Parsing
     // can add some tests/checks using this output; need to toggle verification/debug mode vs. normal mode.
 
     // do this in debug mode

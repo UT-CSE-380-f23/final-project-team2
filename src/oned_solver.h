@@ -2,6 +2,10 @@
 #include "fd_solver.h"
 
 constexpr double scaling_constant = 1.0 / (4 * M_PI * M_PI);
+/*
+** OneDSolver class is a child class of FDSolver containing only the matrix construction in 1D 2nd and 4th order
+** and constructors that help initialize the FD Solver class
+*/
 class OneDSolver:public FDSolver{
     public:
         OneDSolver();

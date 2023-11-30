@@ -2,20 +2,22 @@
  
 // includes classes for libgrvy parsing and parsing with hdf5 files
  
- 
-using namespace GRVY;
-//using namespace std;
- 
 // GrvyParser constructor (only method of the class)
-GrvyParser::GrvyParser(int argc, char **argv){
- 
-    GRVY_Input_Class iparse; // Input parsing object
+GrvyParser::GrvyParser() : GrvyParser::GrvyParser("../heat_input.txt"){
+};
+
+GrvyParser::GrvyParser(const char* input_file):input_file(input_file){
+};
+
+void GrvyParser::parse()
+{ 
+    GRVY::GRVY_Input_Class iparse; // Input parsing object
  
     // likely want to check for debug/verify mode when printing things...
     // also should compare speed using printf vs. std::cout
  
     // Initialize/read the file 
-    if(! iparse.Open("../heat-input.txt"))
+    if(! iparse.Open(this->input_file))
         exit(1);  
  
     // Read in option variables
