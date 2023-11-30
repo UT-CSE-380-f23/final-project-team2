@@ -10,7 +10,7 @@
 # Generic modes/options, defined globally
 # ------------------------------------------------------------------------------
 
-verify = 1 # Option to run in verification mode
+verify = 0 # Option to run in verification mode
 mode = 0   # Option to run in stadard or debug mode
 
 # ------------------------------------------------------------------------------
@@ -19,8 +19,8 @@ mode = 0   # Option to run in stadard or debug mode
 
 [domain]
 
-DIM = 1 # Problem dimension, 1 or 2d
-N = 100        # Mesh Discretization
+DIM = 2 # Problem dimension, 1 or 2d
+N = 2        # Mesh Discretization
 
 # ------------------------------------------------------------------------------
 # Options for how to solve the PDE

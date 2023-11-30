@@ -24,5 +24,5 @@ AX_CODE_COVERAGE
 # Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_HEADER_STDBOOL
 # Checks for library functions.
-#AC_OUTPUT([Makefile src/Makefile test/Makefile])
-AC_OUTPUT([Makefile src/Makefile])
+#TESTS=run_tests.sh
+AC_OUTPUT([Makefile src/Makefile tests/Makefile])

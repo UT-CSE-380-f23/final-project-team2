@@ -98,7 +98,8 @@ void OneDSolver::construct_matrix(){
       gsl_spmatrix_scale(X, -1.0 * scaling_constant / (12 * h * h));
     } 
     else {
-      throw std::invalid_argument("order must be 2 or 4; 2nd or 4th order methods only!");
+      std::cout<< "order must be 2 or 4; 2nd or 4th order methods only!" << std::endl;
+      exit(1);
     }
 
 

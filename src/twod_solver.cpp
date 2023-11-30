@@ -375,6 +375,10 @@ void TwoDSolver::construct_matrix(){
         // Scale the matrix
         gsl_spmatrix_scale(X, (-1.0)*scaling_constant_2d/(12*h*h)); /* Remember to comment/uncoment this */
     }
+    else {
+      std::cout<< "order must be 2 or 4; 2nd or 4th order methods only!" << std::endl;
+      exit(1);
+    }
     /* initialiaze u at zero*/
     gsl_vector_set_zero(this->u);
     const int status = gsl_spmatrix_csr(this->A, X);
