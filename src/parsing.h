@@ -30,9 +30,12 @@ class GrvyParser {
         int N;
         int DIM, ORDER;
         bool verify, mode, solver;
+        const char* input_file;
 
         // the constructor!
-        GrvyParser(int argc, char **argv);
+        GrvyParser();
+        GrvyParser(const char* input_file);
+        void parse();
 };
 /*
 int deprecated_parsing(int ac, char** av){
