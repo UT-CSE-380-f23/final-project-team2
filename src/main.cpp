@@ -14,6 +14,7 @@
 //#include "iterative_methods.h"
 //#include "matrix.h"
 #include "parsing.h"
+#include "output.h"
 
 // variables
 //int n_samples;
@@ -84,5 +85,11 @@ int main(int argc, char *argv[]){
 
         }
     }
+    // dump the output to a hdf5 file
+    Output test_output(grvy_parser);
+    Output test_output_2(grvy_parser,"../output/aaaa.h5");
+  
+    test_output.dump();
+    test_output_2.dump(); 
     return 0;
 }
