@@ -1,0 +1,21 @@
+name: CI 
+on:
+  push: 
+    branches:
+      - main
+# make sure steps are run in a login shell to support Lmod modules 
+defaults:
+  run:
+    shell: bash -l {0}
+jobs: 
+  style:
+    runs-on: ubuntu-20.04
+    container:
+      image: jenilut/cse380_team2
+      options: --user 1001 --privileged
+    name: CI test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Build/test
+        run: module load boost && module load gsl && autoreconf -f -i && ./configure CC=mpicc CXX="mpicxx -std=c++17 -O3" FC=mpif90 --with-grvy=/usr/local/lib/ --with-hdf5=$HDF5_LIB --with-petsc=$PETSC_LIB
