@@ -18,4 +18,4 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Build/test
-        run: module load boost && module load gsl && module load petsc && module swap phdf5 hdf5/1.10.8 && autoreconf -f -i && ./configure CC=mpicc CXX="mpicxx -std=c++17 -O3" FC=mpif90 --with-grvy=/usr/local/include/ --with-hdf5=$HDF5_INC --with-petsc=$PETSC_INC
+        run: module load boost && module load gsl && module load petsc && module swap phdf5 hdf5/1.10.8 && autoreconf -f -i && ./configure CC=mpicc CXX="mpicxx -std=c++17 -O3" FC=mpif90 --with-grvy=/usr/local/ --with-hdf5=$HDF5_DIR --with-petsc=$PETSC_DIR
