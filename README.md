@@ -1,3 +1,5 @@
+[![CI](https://github.com/UT-CSE-380-f23/final-project-team2/actions/workflows/ci_testing.yaml/badge.svg)](https://github.com/UT-CSE-380-f23/final-project-team2/actions/workflows/ci_testing.yaml)
+
 # final-project-team2
 final-project-team2 created by GitHub Classroom
 Authors:  Rodrigo Gonzalez, Kenneth L  Meyer, Jenil Shah
