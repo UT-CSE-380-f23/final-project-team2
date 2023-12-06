@@ -85,20 +85,11 @@ int main(int argc, char *argv[]){
 
         }
     }
-<<<<<<< HEAD
     /*
         dump the output to a hdf5 file
     */ 
     // having different classes for 1d and 2d solver is making this complicated...
     //Output test_output(grvy_parser,s1.FDSolver, "../output/aaaa.h5");
     //test_output.dump();
-=======
-    // dump the output to a hdf5 file
-    Output test_output(grvy_parser);
-    Output test_output_2(grvy_parser,"../output/aaaa.h5");
-  
-    test_output.dump();
-    test_output_2.dump(); 
->>>>>>> f64845748a4c1ca22627c5ec3f3103c1fde05099
     return 0;
 }
