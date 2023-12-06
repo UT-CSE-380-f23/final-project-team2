@@ -73,11 +73,11 @@ int main(int argc, char *argv[]){
         if (grvy_parser.DIM == 1){
             std::cout << "solving a system in 1D!! " << std::endl;
             OneDSolver sl{grvy_parser.N, grvy_parser.DIM, grvy_parser.solver, grvy_parser.ORDER, grvy_parser.verify, grvy_parser.mode};
-            sl.system_solve();
+            sl.system_solve("../output/cccc.h5");
         } else if (grvy_parser.DIM == 2){
             std::cout << "solving a system in 2D!! " << std::endl;
             TwoDSolver sl{grvy_parser.N, grvy_parser.DIM, grvy_parser.solver, grvy_parser.ORDER, grvy_parser.verify, grvy_parser.mode};
-            sl.system_solve();
+            sl.system_solve("../output/bbbb.h5");
         }
         else {
             std::cout << "You don't have a " << grvy_parser.DIM << "D solver implemented yet!" << std::endl;
@@ -85,11 +85,11 @@ int main(int argc, char *argv[]){
 
         }
     }
-    // dump the output to a hdf5 file
-    Output test_output(grvy_parser);
-    Output test_output_2(grvy_parser,"../output/aaaa.h5");
-  
-    test_output.dump();
-    test_output_2.dump(); 
+    /*
+        dump the output to a hdf5 file
+    */ 
+    // having different classes for 1d and 2d solver is making this complicated...
+    //Output test_output(grvy_parser,s1.FDSolver, "../output/aaaa.h5");
+    //test_output.dump();
     return 0;
 }

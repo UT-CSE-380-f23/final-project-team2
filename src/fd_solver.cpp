@@ -43,6 +43,163 @@ inline const double FDSolver::gauss_sidel_element(const gsl_vector* u_prev, cons
     return gsl_vector_get(this->u, j);
 };
 
+// properly initializes the objects for the 
+void FDSolver::save_hdf5_1d_data(const char* outfile){
+    //#define DATASETNAME "heatEqnOutput"
+    #define DATASETNAME "heatEqnOutput"
+    int RANK=this->dim;
+    
+    //#define RANK        this->dim
+    hid_t   file, dataset;       /* file and dataset handles */
+    hid_t   datatype, dataspace; /* handles */
+    herr_t  status;
+    hsize_t dimsf[1];
+    double     data[this->num_nodes]; /* data to write */
+
+    dimsf[0]  = this->num_nodes;
+
+    // interior/non-zero nodes
+    for (int j = 1; j < this->num_nodes - 1; j++){
+        data[j] = gsl_vector_get(this->u,j-1);
+    }
+
+    // boundary conditions for now (ew!)
+    data[0] = 0;
+    data[this->num_nodes - 1] = 0;
+
+    /*
+     * Data  and output buffer initialization.
+     */
+    /*
+    for (j = 0; j < this->grvy_parser.N; j++)
+        for (i = 0; i < NY; i++)
+            data[j][i] = i + j;
+    */
+    //data[0][0] += 1e-6;
+    /*
+     * 0+eps 1 2 3 4 5
+     * 1 2 3 4 5 6
+     * 2 3 4 5 6 7
+     * 3 4 5 6 7 8
+     * 4 5 6 7 8 9
+     */
+    file = H5Fcreate(outfile, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
+
+    /*
+     * Describe the size of the array and create the data space for fixed
+     * size dataset.
+     */
+
+    dataspace = H5Screate_simple(RANK, dimsf, NULL);
+    //dataspace = H5Screate_scalar(RANK, dimsf, NULL);
+
+    /*
+     * Define datatype for the data in the file.
+     * We will store little endian INT numbers.
+     */
+    datatype = H5Tcopy(H5T_NATIVE_DOUBLE);
+    status   = H5Tset_order(datatype, H5T_ORDER_LE);
+
+    /*
+     * Create a new dataset within the file using defined dataspace and
+     * datatype and default dataset creation properties.
+     */
+    dataset = H5Dcreate2(file, DATASETNAME, datatype, dataspace, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+
+    /*
+     * Write the data to the dataset using default transfer properties.
+     */
+    //std::cout << "checking value of data " << data[0] << std::endl;
+    status = H5Dwrite(dataset, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, data);
+
+    /*
+     * Close/release resources.
+     */
+    H5Sclose(dataspace);
+    H5Tclose(datatype);
+    H5Dclose(dataset);
+    H5Fclose(file);
+
+}
+
+void FDSolver::save_hdf5_2d_data(const char* outfile){
+    // variables for HDF5
+    #define DATASETNAME "heatEqnOutput"
+    #define RANK        this->dim
+    hid_t   file, dataset;       /* file and dataset handles */
+    hid_t   datatype, dataspace; /* handles */
+    herr_t  status;
+    hsize_t dimsf[2];
+    double     data[this->num_nodes][this->num_nodes]; /* data to write */
+    
+    dimsf[0]  = this->num_nodes;
+    dimsf[1]  = this->num_nodes;
+
+    // interior/non-zero nodes
+    for (int i = 1; i < this->num_nodes - 1; i++){
+        for (int j=1; j < this->num_nodes - 1; j++){
+            data[i][j] = gsl_vector_get(this->u,(i-1)*(this->num_nodes_no_bndry) + j - 1);
+        }
+    }
+    // exterior nodes, where BC is applied
+    for (int j = 0; j < this->num_nodes; j++){
+        data[0][j] = 0; // x = 0
+        data[this->num_nodes - 1][j] = 0; // x = 1 (x \in [0,1] for us)
+
+        data[j][0] = 0; // y = 0
+        data[j][this->num_nodes - 1] = 0; // y = 1
+
+    }
+
+    // generate the data we are going to output to the file
+    //double data = (this->*hdf5_function)();
+    /*
+     * Create a new file using H5F_ACC_TRUNC access,
+     * default file creation properties, and default file
+     * access properties.
+     */
+    //file = H5Fcreate(H5FILE_NAME, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
+    file = H5Fcreate(outfile, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
+
+    /*
+     * Describe the size of the array and create the data space for fixed
+     * size dataset.
+     */
+
+    dataspace = H5Screate_simple(RANK, dimsf, NULL);
+    //dataspace = H5Screate_scalar(RANK, dimsf, NULL);
+
+    /*
+     * Define datatype for the data in the file.
+     * We will store little endian INT numbers.
+     */
+    datatype = H5Tcopy(H5T_NATIVE_DOUBLE);
+    status   = H5Tset_order(datatype, H5T_ORDER_LE);
+
+    /*
+     * Create a new dataset within the file using defined dataspace and
+     * datatype and default dataset creation properties.
+     */
+    dataset = H5Dcreate2(file, DATASETNAME, datatype, dataspace, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+
+    /*
+     * Write the data to the dataset using default transfer properties.
+     */
+    //std::cout << "checking value of data " << data[0] << std::endl;
+    status = H5Dwrite(dataset, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, data);
+
+    /*
+     * Close/release resources.
+     */
+    H5Sclose(dataspace);
+    H5Tclose(datatype);
+    H5Dclose(dataset);
+    H5Fclose(file);
+
+    // this definition might have to change
+    //double     data[this->grvy_parser.N]; /* data to write */
+}
+
 // for all *_to_string() methods, might want to define the casted integers 
 /*
     Convert the solver_method variable to a string to output L2 error to a file
@@ -77,10 +234,20 @@ void FDSolver::output_L2_norm(){
     Convert finite difference method order to a string
 */
 
-void FDSolver::system_solve(){//(int N_arg, gsl_spmatrix *M, gsl_vector *b, gsl_vector *x, bool jacOrGS){
+void FDSolver::system_solve(const char* outfile){//(int N_arg, gsl_spmatrix *M, gsl_vector *b, gsl_vector *x, bool jacOrGS){
     /* Some variables */
     this->construct_matrix(); // Construct A, f, u
     this->iterative_solve(); // Solve Au = f iteratively
+    // should probably define the function to use similarly to how we picked the iterative solver to use....check that out.
+    if (this->dim == 1){
+        this->save_hdf5_1d_data(outfile);
+    } else if(this->dim == 2){
+        this->save_hdf5_2d_data(outfile);
+    } else{
+        std::cout<< "Can only solve 1D or 2D system!" << std::endl;
+        exit(1);
+    }
+    //this->save_solution(outfile); // save the solution to an HDF5 file.
 }
 void FDSolver::iterative_solve()
 {
