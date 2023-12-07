@@ -23,6 +23,7 @@ FDM Solver Abstract Class
 class FDSolver{
   protected:
     gsl_spmatrix *A{};
+    gsl_spmatrix *A_trip{}; // triplet representation of A, required because of how PETSC solver was implemented
     gsl_vector *f{}, *u{}, *f_temp{}; //Class variables for solving Au = f
     const size_t num_nodes;
     const size_t num_nodes_no_bndry;
@@ -31,7 +32,7 @@ class FDSolver{
     const bool solver_method; /* Variables used for the Gauss-Seidel iteration */
     const bool verify;
     const bool debug;
-    const bool petsc_enabled;
+    const bool petsc_enabled; // Checks whether petsc is enabled or not
     const double tol;                   /* solution relative tolerance */
     const size_t max_iter;                     /* maximum iterations */
     const int nnz;
@@ -56,8 +57,8 @@ class FDSolver{
   public:
     FDSolver();
     FDSolver(const size_t& num_nodes, const int& dim, const bool& solver_method, const int& order, const size_t& nnz);
-    FDSolver(const size_t& num_nodes, const int& dim, const bool& solver_method, const int& order, const bool& verify, const bool& debug, const size_t& nnz);
-    FDSolver(const size_t& num_nodes, const int& dim, const bool& solver_method, const int& order, const bool& verify, const bool& debug, const size_t& nnz, const double& tol, const size_t& max_iter);
+    FDSolver(const size_t& num_nodes, const int& dim, const bool& solver_method, const int& order, const bool& verify, const bool& debug, const bool& USE_PETSC, const size_t& nnz);
+    FDSolver(const size_t& num_nodes, const int& dim, const bool& solver_method, const int& order, const bool& verify, const bool& debug, const bool& USE_PETSC, const size_t& nnz, const double& tol, const size_t& max_iter);
     ~FDSolver();
     //void (*solver_method)(const size_t& N, gsl_spmatrix& A, gsl_vector& f, const gsl_vector& u)
     void system_solve(const char* outfile);

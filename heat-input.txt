@@ -12,6 +12,7 @@
 
 verify = 1 # Option to run in verification mode
 mode = 0   # Option to run in stadard or debug mode
+USE_PETSC = 1 # Option to use PETSC to solve the system
 
 # ------------------------------------------------------------------------------
 # Domain we are solving the equation on
@@ -20,7 +21,7 @@ mode = 0   # Option to run in stadard or debug mode
 [domain]
 
 DIM = 1 # Problem dimension, 1 or 2d
-N = 100        # Mesh Discretization
+N = 10        # Mesh Discretization
 
 # ------------------------------------------------------------------------------
 # Options for how to solve the PDE

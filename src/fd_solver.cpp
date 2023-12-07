@@ -3,20 +3,21 @@
 /*
 ** Default constructor
 */
-FDSolver::FDSolver():FDSolver(0,0,true, 2, 0, 0, 0, 1.0e-12, 1000000){
+FDSolver::FDSolver():FDSolver(0,0,true, 2, 0, 0, 0, 0, 1.0e-12, 1000000){
 }; 
 
 /*
 ** Parametrized constructor
 */
-FDSolver::FDSolver(const size_t& num_nodes, const int& dim, const bool& solver_method, const int& order, const size_t& nnz):FDSolver(num_nodes, dim, solver_method, order, nnz, 1.0e-12, 1000000){
+// this constructor might be deprecated, think it will return wrong result.
+FDSolver::FDSolver(const size_t& num_nodes, const int& dim, const bool& solver_method, const int& order, const size_t& nnz):FDSolver(num_nodes, dim, solver_method, order, 0, 0, 0, nnz){
 };
 
-FDSolver::FDSolver(const size_t& num_nodes, const int& dim, const bool& solver_method, const int& order, const bool& verify, const bool& debug, const size_t& nnz):FDSolver(num_nodes, dim, solver_method, order, verify, debug, nnz, 1.0e-12, 1000000){
+FDSolver::FDSolver(const size_t& num_nodes, const int& dim, const bool& solver_method, const int& order, const bool& verify, const bool& debug, const bool& USE_PETSC, const size_t& nnz):FDSolver(num_nodes, dim, solver_method, order, verify, debug, USE_PETSC, nnz, 1.0e-12, 1000000){
 };
 
-FDSolver::FDSolver(const size_t& num_nodes, const int& dim, const bool& solver_method, const int& order, const bool& verify, const bool& debug, const size_t& nnz, const double& tol, 
-    const size_t& max_iter) : num_nodes(num_nodes),dim(dim), solver_method(solver_method), order(order), verify(verify), debug(debug), petsc_enabled(1), tol(tol), max_iter(max_iter), num_nodes_no_bndry(num_nodes-2), matrix_length(std::pow(this->num_nodes_no_bndry, this->dim)), nnz(nnz){
+FDSolver::FDSolver(const size_t& num_nodes, const int& dim, const bool& solver_method, const int& order, const bool& verify, const bool& debug, const bool& USE_PETSC, const size_t& nnz, const double& tol, 
+    const size_t& max_iter) : num_nodes(num_nodes),dim(dim), solver_method(solver_method), order(order), verify(verify), debug(debug), petsc_enabled(USE_PETSC), tol(tol), max_iter(max_iter), num_nodes_no_bndry(num_nodes-2), matrix_length(std::pow(this->num_nodes_no_bndry, this->dim)), nnz(nnz){
         //Allocate memory for matrix and vector
     // testing!!
     std::cout << "Order of the method that we are using: " << order << std::endl;
@@ -377,9 +378,14 @@ void FDSolver::output_L2_norm(){
 void FDSolver::system_solve(const char* outfile){//(int N_arg, gsl_spmatrix *M, gsl_vector *b, gsl_vector *x, bool jacOrGS){
     /* Some variables */
     this->construct_matrix(); // Construct A, f, u
+
+    // solve the system with or without petsc
     if(this->petsc_enabled){
+        this->petsc_solver();
     }else{
-    this->iterative_solve(); // Solve Au = f iteratively
+        this->iterative_solve(); 
+    }
+    // Solve Au = f iteratively
     // should probably define the function to use similarly to how we picked the iterative solver to use....check that out.
     /*
     if (this->dim == 1){
@@ -392,7 +398,7 @@ void FDSolver::system_solve(const char* outfile){//(int N_arg, gsl_spmatrix *M, 
     }*/
     this->save_hdf5_data(outfile);
     //this->save_solution(outfile); // save the solution to an HDF5 file.
-    }
+    
 }
 
 PetscErrorCode FDSolver::petsc_solver(){
@@ -414,7 +420,7 @@ PetscErrorCode FDSolver::petsc_solver(){
   */
 
   // Set it up
-  m = num_nodes_no_bndry; n = num_nodes_no_bndry; // size of the matrix
+  m = this->num_nodes_no_bndry; n = this->num_nodes_no_bndry; // size of the matrix
   ierr = MatCreate(PETSC_COMM_WORLD, &P);CHKERRQ(ierr);
   ierr = MatSetType(P, MATAIJ);CHKERRQ(ierr);
   ierr = MatSetSizes(P, PETSC_DECIDE, PETSC_DECIDE, m, n);CHKERRQ(ierr);
@@ -423,12 +429,24 @@ PetscErrorCode FDSolver::petsc_solver(){
   // Populate it
   PetscReal apq;
   PetscInt p,q;
-  for(int s = 0; s < A->nz; s++){
+
+  gsl_spmatrix *A_triplet = gsl_spmatrix_compress(this->A,GSL_SPMATRIX_COO);
+  
+
+  std::cout << this->nnz << std::endl;
+  std::cout << (this->A)->sptype << std::endl;
+  std::cout << (A_triplet)->sptype << std::endl;
+
+  return 0;
+
+  for(int s = 0; s < (this->A)->nz; s++){
     p = (this->A)->i[s];        // Column
     q = (this->A)->p[s];        // Row
     apq = (this->A)->data[s];   // Value
     ierr = MatSetValue(P, p, q, apq, INSERT_VALUES);CHKERRQ(ierr); 
   }
+
+  return 0;
 
   // Assemble the matrix
   ierr = MatAssemblyBegin(P, MAT_FINAL_ASSEMBLY);CHKERRQ(ierr);
@@ -443,7 +461,7 @@ PetscErrorCode FDSolver::petsc_solver(){
   */
 
   // Set up
-  n = num_nodes_no_bndry;
+  n = this->num_nodes_no_bndry;
   ierr = VecCreateSeq(PETSC_COMM_SELF,n,&b);CHKERRQ(ierr);
   ierr = VecSet(b,0.0);CHKERRQ(ierr);
 

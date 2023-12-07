@@ -29,7 +29,7 @@ class GrvyParser {
         //std::string solver;
         int N;
         int DIM, ORDER;
-        bool verify, mode, solver;
+        bool verify, mode, solver, USE_PETSC;
         const char* input_file;
 
         // the constructor!
