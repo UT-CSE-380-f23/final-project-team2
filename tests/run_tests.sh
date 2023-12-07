@@ -5,7 +5,7 @@ executable='../src/run'
 # bats test_tags=tag:1
 @test "verify ./run exits correctly with invalid DIM" {
 #run $("${factorial_executable} -1")
-run $executable heat-input-bad-dim.txt
+run $executable ../heat-input-bad-dim.txt
 [ "$status" -eq 1 ]
 #[ "${lines[-1]}" = "You don't have a 3D solver implemented yet" ]
 }
