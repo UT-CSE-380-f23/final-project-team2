@@ -15,6 +15,8 @@
 
 #include <hdf5.h>
 
+#include <petscksp.h>
+
 /*
 
 FDM Solver Abstract Class 
@@ -23,7 +25,7 @@ FDM Solver Abstract Class
 class FDSolver{
   protected:
     gsl_spmatrix *A{};
-    gsl_vector *f{}, *u{}; //Class variables for solving Au = f
+    gsl_vector *f{}, *u{}, *f_temp{}; //Class variables for solving Au = f
     const size_t num_nodes;
     const size_t num_nodes_no_bndry;
     const int dim;
@@ -51,6 +53,7 @@ class FDSolver{
     virtual void construct_matrix() = 0; // pure virtual function defined in derived class
     inline const double jacobi_element(const gsl_vector *u_prev, const int &j);
     inline const double gauss_sidel_element(const gsl_vector *u_prev, const int &j);
+
   public:
     FDSolver();
     FDSolver(const size_t& num_nodes, const int& dim, const bool& solver_method, const int& order, const size_t& nnz);
@@ -67,7 +70,19 @@ class FDSolver{
     const std::string solver_method_to_string();
     void output_L2_norm();
 
+    // structure to hold data for HDF5 file writing 
+    //int matDim = nDim == 2 ? N * N : N;
+    //template <N, dim>
+    typedef struct {
+      double x, y;    // Coordinates
+      double numerical_temp;
+      double analytical_temp; // rubric does not ask for analytical temp field, just analytical temp...
+    } NodeData;
+
+
+
     // hdf5 functions
+    void save_hdf5_data(const char* outfile);
     void save_hdf5_1d_data(const char* outfile);
     void save_hdf5_2d_data(const char* outfile);
     //void save_solution(const char* outfile);
