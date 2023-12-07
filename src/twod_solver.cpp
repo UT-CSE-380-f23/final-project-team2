@@ -12,7 +12,7 @@ TwoDSolver::TwoDSolver(const size_t& num_nodes, const int& dim, const bool& solv
     std::cout<<"We are constructing oned solver entirely from libgrvy inputs now "<< num_nodes<<std::endl;
 };
 
-TwoDSolver::TwoDSolver(const size_t& num_nodes, const int& dim, const bool& solver_method, const int& order,const bool& verify, const bool& debug):FDSolver::FDSolver(num_nodes,dim,solver_method,order,verify,debug, 9*num_nodes*num_nodes){
+TwoDSolver::TwoDSolver(const size_t& num_nodes, const int& dim, const bool& solver_method, const int& order,const bool& verify, const bool& debug, const bool& USE_PETSC):FDSolver::FDSolver(num_nodes,dim,solver_method,order,verify,debug, USE_PETSC, 9*num_nodes*num_nodes){
     std::cout<<"We are constructing oned solver entirely from libgrvy inputs now "<< num_nodes<<std::endl;
 };
 

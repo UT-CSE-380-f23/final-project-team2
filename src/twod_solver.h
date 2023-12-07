@@ -11,6 +11,6 @@ class TwoDSolver:public FDSolver{
         TwoDSolver();
         TwoDSolver(const size_t& num_nodes, const bool& solver_method);
         TwoDSolver(const size_t& num_nodes, const int& dim, const bool& solver_method, const int& order);
-        TwoDSolver(const size_t& num_nodes, const int& dim, const bool& solver_method, const int& order,const bool& verify, const bool& debug);
+        TwoDSolver(const size_t& num_nodes, const int& dim, const bool& solver_method, const int& order,const bool& verify, const bool& debug, const bool& USE_PETSC);
         void construct_matrix();
 };

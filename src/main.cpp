@@ -72,11 +72,11 @@ int main(int argc, char *argv[]){
     {
         if (grvy_parser.DIM == 1){
             std::cout << "solving a system in 1D!! " << std::endl;
-            OneDSolver sl{grvy_parser.N, grvy_parser.DIM, grvy_parser.solver, grvy_parser.ORDER, grvy_parser.verify, grvy_parser.mode};
+            OneDSolver sl{grvy_parser.N, grvy_parser.DIM, grvy_parser.solver, grvy_parser.ORDER, grvy_parser.verify, grvy_parser.mode, grvy_parser.USE_PETSC};
             sl.system_solve("../output/cccc.h5");
         } else if (grvy_parser.DIM == 2){
             std::cout << "solving a system in 2D!! " << std::endl;
-            TwoDSolver sl{grvy_parser.N, grvy_parser.DIM, grvy_parser.solver, grvy_parser.ORDER, grvy_parser.verify, grvy_parser.mode};
+            TwoDSolver sl{grvy_parser.N, grvy_parser.DIM, grvy_parser.solver, grvy_parser.ORDER, grvy_parser.verify, grvy_parser.mode, grvy_parser.USE_PETSC};
             sl.system_solve("../output/bbbb.h5");
         }
         else {

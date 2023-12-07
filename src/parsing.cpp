@@ -20,12 +20,20 @@ void GrvyParser::parse()
     if(! iparse.Open(this->input_file))
         exit(1);  
  
-    // Read in option variables
+    /* 
+    
+    Read in option variables
+
+    */
+    // verification mode
     if( iparse.Read_Var("verify",&verify,0) )
         printf("--> %-11s = %i\n","verify",verify);
- 
+    // debug mode 
     if( iparse.Read_Var("mode",&mode,0) )
         printf("--> %-11s = %i\n","mode",mode);
+    // use PETSC
+    if( iparse.Read_Var("USE_PETSC",&USE_PETSC,0) )
+        printf("--> %-11s = %i\n","USE_PETSC",USE_PETSC);
  
     // Read in domain variables
     if( iparse.Read_Var("domain/N",&N) )

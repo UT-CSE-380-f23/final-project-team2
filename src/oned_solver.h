@@ -11,6 +11,6 @@ class OneDSolver:public FDSolver{
         OneDSolver();
         OneDSolver(const size_t& num_nodes, const bool& solver_method);
         OneDSolver(const size_t& num_nodes, const int& dim, const bool& solver_method, const int& order);
-        OneDSolver(const size_t& num_nodes, const int& dim, const bool& solver_method, const int& order,const bool& verify, const bool& debug);
+        OneDSolver(const size_t& num_nodes, const int& dim, const bool& solver_method, const int& order,const bool& verify, const bool& debug, const bool& USE_PETSC);
         void construct_matrix();
 };
