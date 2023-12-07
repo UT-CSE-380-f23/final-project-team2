@@ -5,7 +5,8 @@ AC_INIT([cse380_jen_ken_rod], [0.0.1], [kmeyer2@utexas.edu])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_SRCDIR([src/main.cpp])
 AC_CONFIG_HEADER(src/config.h)
-AM_INIT_AUTOMAKE
+#AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([serial-tests])
 # Checks for programs.
 AC_PROG_CXX
 # Checks for libraries.
