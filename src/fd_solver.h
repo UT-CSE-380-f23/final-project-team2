@@ -14,9 +14,7 @@
 #include <gsl/gsl_spblas.h>
 
 #include <hdf5.h>
-
-#include <petscksp.h>
-
+#include <petsc.h>
 /*
 
 FDM Solver Abstract Class 
@@ -33,6 +31,7 @@ class FDSolver{
     const bool solver_method; /* Variables used for the Gauss-Seidel iteration */
     const bool verify;
     const bool debug;
+    const bool petsc_enabled;
     const double tol;                   /* solution relative tolerance */
     const size_t max_iter;                     /* maximum iterations */
     const int nnz;
@@ -62,6 +61,7 @@ class FDSolver{
     ~FDSolver();
     //void (*solver_method)(const size_t& N, gsl_spmatrix& A, gsl_vector& f, const gsl_vector& u)
     void system_solve(const char* outfile);
+    PetscErrorCode petsc_solver();
     //adding order as a parameter to the construct matrix function
     //virtual void construct_matrix(const int& order)=0; // pure virtual function defined in derived class
     //virtual void construct_matrix()=0; // pure virtual function defined in derived class
