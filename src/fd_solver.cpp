@@ -412,6 +412,11 @@ PetscErrorCode FDSolver::petsc_solver(){
   PetscInt n, m;        // sizes -- used for both matrix and vector
   KSP ksp;
 
+  const int nnz = this->A->nz;
+  const int *row_idx_arr{this->A->p};
+  const int *col_idx_arr{this->A->i};
+  const double *data_A{this->A->data};
+
   /* Only call this *once* in a program */
   PetscInitialize(0,NULL,NULL,NULL);
 
@@ -426,27 +431,33 @@ PetscErrorCode FDSolver::petsc_solver(){
   ierr = MatSetSizes(P, PETSC_DECIDE, PETSC_DECIDE, m, n);CHKERRQ(ierr);
   ierr = MatSetUp(P);CHKERRQ(ierr);
 
-  // Populate it
-  PetscReal apq;
-  PetscInt p,q;
-
-  gsl_spmatrix *A_triplet = gsl_spmatrix_compress(this->A,GSL_SPMATRIX_COO);
-  
-
-  std::cout << this->nnz << std::endl;
-  std::cout << (this->A)->sptype << std::endl;
-  std::cout << (A_triplet)->sptype << std::endl;
-
-  return 0;
-
-  for(int s = 0; s < (this->A)->nz; s++){
-    p = (this->A)->i[s];        // Column
-    q = (this->A)->p[s];        // Row
-    apq = (this->A)->data[s];   // Value
-    ierr = MatSetValue(P, p, q, apq, INSERT_VALUES);CHKERRQ(ierr); 
+  const int size1 = this->A->size1;
+  for (int i = 0; i < size1; i++){
+    for (int j = row_idx_arr[i]; j < (row_idx_arr[i+1]); j++){
+      ierr = MatSetValue(P, i, col_idx_arr[j], data_A[j], INSERT_VALUES);CHKERRQ(ierr);
+    }
   }
 
-  return 0;
+  /*
+  for (int i = 0; i < A_row->size1; i++){
+    for (int j = A_row->p[i]; j < (A_row->p[i+1]); j++){
+      ierr = MatSetValue(P, i, A_row->i[j], A_row->data[j], INSERT_VALUES);CHKERRQ(ierr);
+    }
+  }
+  */
+
+  ierr = MatView(P,PETSC_VIEWER_STDOUT_WORLD);CHKERRQ(ierr);
+
+  // Populate it
+  //PetscReal apq;
+  PetscInt p,q;
+  
+  //for(int s = 0; s < (this->A)->nz; s++){
+  //  p = (this->A)->i[s];        // Column
+  //  q = (this->A)->p[s];        // Row
+  //  apq = (this->A)->data[s];   // Value
+  //  ierr = MatSetValue(P, p, q, apq, INSERT_VALUES);CHKERRQ(ierr); 
+  //}
 
   // Assemble the matrix
   ierr = MatAssemblyBegin(P, MAT_FINAL_ASSEMBLY);CHKERRQ(ierr);
@@ -490,13 +501,40 @@ PetscErrorCode FDSolver::petsc_solver(){
   /* The solution vector */
   ierr = VecCreateSeq(PETSC_COMM_SELF,n,&x);CHKERRQ(ierr);
   ierr = VecSet(x,0.0);CHKERRQ(ierr);
+  /* solve linear system */
+  ierr = KSPCreate(PETSC_COMM_WORLD,&ksp);CHKERRQ(ierr);
+  ierr = KSPSetOperators(ksp,P,P);CHKERRQ(ierr);
+  ierr = KSPSetType(ksp, KSPGMRES);
+  ierr = KSPSolve(ksp,b,x);CHKERRQ(ierr);
+
+  /* some post-processing */
+  KSPConvergedReason reason;
+  PetscInt nits;
+  PetscReal rnorm;
+  KSPGetConvergedReason(ksp, &reason);
+  KSPGetIterationNumber(ksp, &nits);
+  KSPGetResidualNorm(ksp, &rnorm);
+
+  if(reason > 0){
+    std::cout << "Converged after " << nits << " iterations, with a residual norm of " << rnorm << " \n";
+  }else{
+    std::cout << "Did not converge after " << nits << " iterations \n";
+  };
+
+  /* compute the L2 error */
+  PetscScalar a = -1.0;
+  ierr = VecAXPY(b, a, x);CHKERRQ(ierr);
+  PetscReal   l2_error = 0.0;
+  ierr = VecNorm(b, NORM_2,&l2_error);CHKERRQ(ierr);
+
+  std::cout << "L_2 error: " << l2_error << "\n";
 
     /*
 
     Populate the GSL solution
 
     */
-   
+
     PetscInt ix[1] = {0};
     PetscScalar y[1] = {0.0};
 
