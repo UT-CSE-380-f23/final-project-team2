@@ -16,7 +16,7 @@ FDSolver::FDSolver(const size_t& num_nodes, const int& dim, const bool& solver_m
 };
 
 FDSolver::FDSolver(const size_t& num_nodes, const int& dim, const bool& solver_method, const int& order, const bool& verify, const bool& debug, const size_t& nnz, const double& tol, 
-    const size_t& max_iter) : num_nodes(num_nodes),dim(dim), solver_method(solver_method), order(order), verify(verify), debug(debug), tol(tol), max_iter(max_iter), num_nodes_no_bndry(num_nodes-2), matrix_length(std::pow(this->num_nodes_no_bndry, this->dim)), nnz(nnz){
+    const size_t& max_iter) : num_nodes(num_nodes),dim(dim), solver_method(solver_method), order(order), verify(verify), debug(debug), petsc_enabled(1), tol(tol), max_iter(max_iter), num_nodes_no_bndry(num_nodes-2), matrix_length(std::pow(this->num_nodes_no_bndry, this->dim)), nnz(nnz){
         //Allocate memory for matrix and vector
     // testing!!
     std::cout << "Order of the method that we are using: " << order << std::endl;
@@ -377,6 +377,8 @@ void FDSolver::output_L2_norm(){
 void FDSolver::system_solve(const char* outfile){//(int N_arg, gsl_spmatrix *M, gsl_vector *b, gsl_vector *x, bool jacOrGS){
     /* Some variables */
     this->construct_matrix(); // Construct A, f, u
+    if(this->petsc_enabled){
+    }else{
     this->iterative_solve(); // Solve Au = f iteratively
     // should probably define the function to use similarly to how we picked the iterative solver to use....check that out.
     /*
@@ -390,7 +392,121 @@ void FDSolver::system_solve(const char* outfile){//(int N_arg, gsl_spmatrix *M, 
     }*/
     this->save_hdf5_data(outfile);
     //this->save_solution(outfile); // save the solution to an HDF5 file.
+    }
 }
+
+PetscErrorCode FDSolver::petsc_solver(){
+      
+  /*
+    Some necessary variables
+  */
+  PetscErrorCode ierr;  // PETSC error
+  Mat P;                // PETSC matrix
+  Vec x,b;              // PETSC vectors, x is the solution, b the RHS
+  PetscInt n, m;        // sizes -- used for both matrix and vector
+  KSP ksp;
+
+  /* Only call this *once* in a program */
+  PetscInitialize(0,NULL,NULL,NULL);
+
+  /*
+    Build the PETS matrix
+  */
+
+  // Set it up
+  m = num_nodes_no_bndry; n = num_nodes_no_bndry; // size of the matrix
+  ierr = MatCreate(PETSC_COMM_WORLD, &P);CHKERRQ(ierr);
+  ierr = MatSetType(P, MATAIJ);CHKERRQ(ierr);
+  ierr = MatSetSizes(P, PETSC_DECIDE, PETSC_DECIDE, m, n);CHKERRQ(ierr);
+  ierr = MatSetUp(P);CHKERRQ(ierr);
+
+  // Populate it
+  PetscReal apq;
+  PetscInt p,q;
+  for(int s = 0; s < A->nz; s++){
+    p = (this->A)->i[s];        // Column
+    q = (this->A)->p[s];        // Row
+    apq = (this->A)->data[s];   // Value
+    ierr = MatSetValue(P, p, q, apq, INSERT_VALUES);CHKERRQ(ierr); 
+  }
+
+  // Assemble the matrix
+  ierr = MatAssemblyBegin(P, MAT_FINAL_ASSEMBLY);CHKERRQ(ierr);
+  ierr = MatAssemblyEnd(P, MAT_FINAL_ASSEMBLY);CHKERRQ(ierr);
+
+  // View the matrix (optional)
+  // std::cout << "The right matrix (triplet representation): \n";
+  // ierr = MatView(P, PETSC_VIEWER_STDOUT_WORLD);CHKERRQ(ierr);
+
+  /*
+    Build the PETS vector
+  */
+
+  // Set up
+  n = num_nodes_no_bndry;
+  ierr = VecCreateSeq(PETSC_COMM_SELF,n,&b);CHKERRQ(ierr);
+  ierr = VecSet(b,0.0);CHKERRQ(ierr);
+
+  // Populate the RHS
+  PetscReal bp;
+  for (int s = 0; s < n; s++){
+    p = s;
+    bp = gsl_vector_get(this->f, s); 
+    ierr = VecSetValue(b, p, bp, INSERT_VALUES);CHKERRQ(ierr);
+  }
+
+  // Assembly
+  ierr = VecAssemblyBegin(b);CHKERRQ(ierr);
+  ierr = VecAssemblyEnd(b);CHKERRQ(ierr);
+
+  // View the RHS (optional)
+  // std::cout << "The right hand side: \n";
+  // ierr = VecView(b, 0);CHKERRQ(ierr);
+
+  /*
+  
+    Now we solve the system using GMRES
+  
+  */
+ 
+  /* The solution vector */
+  ierr = VecCreateSeq(PETSC_COMM_SELF,n,&x);CHKERRQ(ierr);
+  ierr = VecSet(x,0.0);CHKERRQ(ierr);
+
+    /*
+
+    Populate the GSL solution
+
+    */
+   
+    PetscInt ix[1] = {0};
+    PetscScalar y[1] = {0.0};
+
+    for (int s = 0; s < n; s++){
+        ix[0] = s;
+        ierr = VecGetValues(x, 1, ix, y);CHKERRQ(ierr);
+        gsl_vector_set(this->u, s, y[0]);
+    }
+
+  /* 
+    Clean up 
+  */
+  
+  // KSP
+  ierr = KSPDestroy(&ksp);CHKERRQ(ierr);
+  // Matrix
+  ierr = MatDestroy(&P);CHKERRQ(ierr);
+  // RHS
+  ierr = VecDestroy(&b);CHKERRQ(ierr);
+  // Solution vector
+  ierr = VecDestroy(&x);CHKERRQ(ierr);
+  /* Only call this *once* in a program -- finalize petsc */
+  ierr = PetscFinalize();
+
+  return ierr;
+}
+
+
 void FDSolver::iterative_solve()
 {
     std::cout << "Constructed problem, now solving..." << std::endl;
