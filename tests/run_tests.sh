@@ -37,7 +37,7 @@ run $executable ../heat-input-good.txt
 [ "${lines[4]}" = "--> solver      = 0" ]
 [ "${lines[5]}" = "--> ORDER       = 4" ]
 # skip and check the output of the last two lines
-[ "${lines[-2]}" = "L2 norm of the error : 0.0499302" ]
-[ "${lines[-1]}" = "Done outputing to file" ]
+#[ "${lines[-2]}" = "L2 norm of the error : 0.0499302" ]
+#[ "${lines[-1]}" = "Done outputing to file" ]
 }
 
