@@ -7,6 +7,11 @@ Authors:  Rodrigo Gonzalez, Kenneth L  Meyer, Jenil Shah
 ## Installation Notes
 todo: check if the code should be able to be built and ran on *any* system, or just lonestar6. I.e. does the `Makefile` just need to work properly for any user on ls6? Or for users beyond ls6 as well?
 
+## Running the code on docker
+1. Clone the repo
+2. Run the following command :
+`docker run -v <cloned_folder>:/home/test jenilut/cse380_team2 csh <cloned_folder>/Docker/docker_make.sh`
+
 ### Installing libgrvy
 Documentation of a local copy of [libgrvy](https://github.com/hpcsi/grvy) is shown below. The link to the version installed can be found [here](https://github.com/hpcsi/grvy/releases/tag/0.38.0)
 
