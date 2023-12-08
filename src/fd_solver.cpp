@@ -425,7 +425,7 @@ PetscErrorCode FDSolver::petsc_solver(){
   */
 
   // Set it up
-  m = this->num_nodes_no_bndry; n = this->num_nodes_no_bndry; // size of the matrix
+  m = this->matrix_length; n = this->matrix_length; // size of the matrix
   ierr = MatCreate(PETSC_COMM_WORLD, &P);CHKERRQ(ierr);
   ierr = MatSetType(P, MATAIJ);CHKERRQ(ierr);
   ierr = MatSetSizes(P, PETSC_DECIDE, PETSC_DECIDE, m, n);CHKERRQ(ierr);
@@ -472,7 +472,7 @@ PetscErrorCode FDSolver::petsc_solver(){
   */
 
   // Set up
-  n = this->num_nodes_no_bndry;
+  n = this->matrix_length;
   ierr = VecCreateSeq(PETSC_COMM_SELF,n,&b);CHKERRQ(ierr);
   ierr = VecSet(b,0.0);CHKERRQ(ierr);
 
@@ -497,6 +497,10 @@ PetscErrorCode FDSolver::petsc_solver(){
     Now we solve the system using GMRES
   
   */
+  PetscReal rtol = 1e-10; // default is 1e-5
+  PetscReal atol=1e-50; // default
+  PetscReal dtol=1e5;   // default
+  PetscReal maxits=1e4; // default
  
   /* The solution vector */
   ierr = VecCreateSeq(PETSC_COMM_SELF,n,&x);CHKERRQ(ierr);
@@ -505,6 +509,8 @@ PetscErrorCode FDSolver::petsc_solver(){
   ierr = KSPCreate(PETSC_COMM_WORLD,&ksp);CHKERRQ(ierr);
   ierr = KSPSetOperators(ksp,P,P);CHKERRQ(ierr);
   ierr = KSPSetType(ksp, KSPGMRES);
+  // set the tolerance
+  ierr = KSPSetTolerances(ksp, rtol, atol, dtol, maxits); CHKERRQ(ierr);
   ierr = KSPSolve(ksp,b,x);CHKERRQ(ierr);
 
   /* some post-processing */
@@ -519,6 +525,7 @@ PetscErrorCode FDSolver::petsc_solver(){
     std::cout << "Converged after " << nits << " iterations, with a residual norm of " << rnorm << " \n";
   }else{
     std::cout << "Did not converge after " << nits << " iterations \n";
+    std::cout << "residual = " << rnorm << "\n";
   };
 
   /* compute the L2 error */
