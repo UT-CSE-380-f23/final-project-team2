@@ -1,0 +1,2 @@
+#!/bin/csh
+module load boost gsl petsc && module load phdf5 && autoreconf -f -i && ./configure CC=mpicc CXX="mpicxx -std=c++17 -O3" FC=mpif90 --with-grvy=/usr/local/ --with-hdf5=$HDF5_DIR --with-petsc=$PETSC_DIR && make && make check
