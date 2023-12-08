@@ -43,6 +43,9 @@
 int main(int argc, char *argv[]){
     GrvyParser grvy_parser(argv[1]); // To take input file as an argument
     grvy_parser.parse(); // Parsing
+
+    const char* outfile = argv[2];
+
     // can add some tests/checks using this output; need to toggle verification/debug mode vs. normal mode.
 
     // do this in debug mode
@@ -73,11 +76,11 @@ int main(int argc, char *argv[]){
         if (grvy_parser.DIM == 1){
             std::cout << "solving a system in 1D!! " << std::endl;
             OneDSolver sl{grvy_parser.N, grvy_parser.DIM, grvy_parser.solver, grvy_parser.ORDER, grvy_parser.verify, grvy_parser.mode, grvy_parser.USE_PETSC};
-            sl.system_solve("../output/cccc.h5");
+            sl.system_solve(outfile);
         } else if (grvy_parser.DIM == 2){
             std::cout << "solving a system in 2D!! " << std::endl;
             TwoDSolver sl{grvy_parser.N, grvy_parser.DIM, grvy_parser.solver, grvy_parser.ORDER, grvy_parser.verify, grvy_parser.mode, grvy_parser.USE_PETSC};
-            sl.system_solve("../output/bbbb.h5");
+            sl.system_solve(outfile);
         }
         else {
             std::cout << "You don't have a " << grvy_parser.DIM << "D solver implemented yet!" << std::endl;
