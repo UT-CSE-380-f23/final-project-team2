@@ -271,8 +271,6 @@ PetscErrorCode FDSolver::petsc_solver(){
   }
   */
 
-  ierr = MatView(P,PETSC_VIEWER_STDOUT_WORLD);CHKERRQ(ierr);
-
   // Populate it
   //PetscReal apq;
   PetscInt p,q;
@@ -288,9 +286,11 @@ PetscErrorCode FDSolver::petsc_solver(){
   ierr = MatAssemblyBegin(P, MAT_FINAL_ASSEMBLY);CHKERRQ(ierr);
   ierr = MatAssemblyEnd(P, MAT_FINAL_ASSEMBLY);CHKERRQ(ierr);
 
-  // View the matrix (optional)
-  // std::cout << "The right matrix (triplet representation): \n";
-  // ierr = MatView(P, PETSC_VIEWER_STDOUT_WORLD);CHKERRQ(ierr);
+  if (this->debug){
+    std::cout << "The right matrix (triplet representation): \n";
+    ierr = MatView(P,PETSC_VIEWER_STDOUT_WORLD);CHKERRQ(ierr);
+  }
+
 
   /*
     Build the PETS vector
@@ -314,8 +314,10 @@ PetscErrorCode FDSolver::petsc_solver(){
   ierr = VecAssemblyEnd(b);CHKERRQ(ierr);
 
   // View the RHS (optional)
-  // std::cout << "The right hand side: \n";
-  // ierr = VecView(b, 0);CHKERRQ(ierr);
+  if (this->debug){
+    std::cout << "The right hand side: \n";
+    ierr = VecView(b, 0);CHKERRQ(ierr);
+  }
 
   /*
   
