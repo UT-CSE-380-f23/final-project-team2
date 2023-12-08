@@ -51,11 +51,18 @@ run $executable ../heat-input-good.txt
 #[ "$status" -eq 0 ]
 #}
 
-@test "run code with and without PETSc and check difference (relative tolerance) with h5diff" {
+@test "run code with and without PETSc and check difference (relative tolerance) with h5diff." {
 run $executable ../heat-input-good-petsc-2-100.txt ../petsc-2-100.h5
 run $executable ../heat-input-good-nopetsc-2-100.txt ../nopetsc-2-100.h5
 # -p specifies to compare the relative tolerances
 run h5diff -p 0.001 ../nopetsc-2-100.h5 ../petsc-2-100.h5
+[ "$status" -eq 0 ]
+}
+
+@test "5hdiff with 1D, N = 10, 2nd Order gauss-seidel and GMRES." {
+run $executable ../heat-input-good-petsc-1-10.txt ../petsc-1-10.h5
+run $executable ../heat-input-good-nopetsc-1-10.txt ../nopetsc-1-10.h5
+run h5diff -p 0.000001 ../nopetsc-1-10.h5 ../petsc-1-10.h5
 [ "$status" -eq 0 ]
 }
 
