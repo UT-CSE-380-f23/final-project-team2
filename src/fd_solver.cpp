@@ -203,13 +203,16 @@ void FDSolver::output_L2_norm(){
 void FDSolver::system_solve(const char* outfile){//(int N_arg, gsl_spmatrix *M, gsl_vector *b, gsl_vector *x, bool jacOrGS){
     /* Some variables */
     this->construct_matrix(); // Construct A, f, u
-
     // solve the system with or without petsc
+    
     if(this->petsc_enabled){
-        this->petsc_solver();
-    }else{
-        this->iterative_solve(); 
+        #ifdef INCLUDE_PETSC
+            this->petsc_solver();
+        #endif
+        std::cout<<"Petsc part"<<std::endl;
     }
+    else
+        this->iterative_solve();
     // Solve Au = f iteratively
     // should probably define the function to use similarly to how we picked the iterative solver to use....check that out.
     /*
@@ -226,8 +229,8 @@ void FDSolver::system_solve(const char* outfile){//(int N_arg, gsl_spmatrix *M, 
     
 }
 
-PetscErrorCode FDSolver::petsc_solver(){
-      
+#ifdef INCLUDE_PETSC
+const PetscErrorCode FDSolver::petsc_solver(){
   /*
     Some necessary variables
   */
@@ -395,7 +398,7 @@ PetscErrorCode FDSolver::petsc_solver(){
 
   return ierr;
 }
-
+#endif
 
 void FDSolver::iterative_solve()
 {
