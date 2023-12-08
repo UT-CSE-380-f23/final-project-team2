@@ -80,13 +80,6 @@ class FDSolver{
       double analytical_temp; // rubric does not ask for analytical temp field, just analytical temp...
     } NodeData;
 
-
-
     // hdf5 functions
     void save_hdf5_data(const char* outfile);
-    void save_hdf5_1d_data(const char* outfile);
-    void save_hdf5_2d_data(const char* outfile);
-    //void save_solution(const char* outfile);
-
-
 };
