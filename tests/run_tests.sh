@@ -46,8 +46,16 @@ run $executable ../heat-input-good.txt
 # is less that 0.001, indicating that the results obtained using GMRES and gauss-seidel
 # are similar.
 # bats test_tags=tag:5
-@test "check difference between 2D, N=100, 4th order gauss-seidel and PETSc GMRES" {
-run h5diff -p 0.001 ../output/no_petsc_2d_100.h5 ../output/petsc_2d_100.h5
+#@test "check difference between 2D, N=100, 4th order gauss-seidel and PETSc GMRES" {
+#run h5diff -p 0.001 ../output/no_petsc_2d_100.h5 ../output/petsc_2d_100.h5
+#[ "$status" -eq 0 ]
+#}
+
+@test "run code with and without PETSc and check difference (relative tolerance) with h5diff" {
+run $executable ../heat-input-good-petsc-2-100.txt ../petsc-2-100.h5
+run $executable ../heat-input-good-nopetsc-2-100.txt ../nopetsc-2-100.h5
+# -p specifies to compare the relative tolerances
+run h5diff -p 0.001 ../nopetsc-2-100.h5 ../petsc-2-100.h5
 [ "$status" -eq 0 ]
 }
 
