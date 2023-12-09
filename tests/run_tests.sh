@@ -51,6 +51,7 @@ run $executable ../heat-input-good.txt
 #[ "$status" -eq 0 ]
 #}
 
+#ifdef INCLUDE_PETSC
 @test "run code with and without PETSc and check difference (relative tolerance) with h5diff." {
 run $executable ../heat-input-good-petsc-2-100.txt ../petsc-2-100.h5
 run $executable ../heat-input-good-nopetsc-2-100.txt ../nopetsc-2-100.h5
@@ -65,4 +66,5 @@ run $executable ../heat-input-good-nopetsc-1-10.txt ../nopetsc-1-10.h5
 run h5diff -p 0.000001 ../nopetsc-1-10.h5 ../petsc-1-10.h5
 [ "$status" -eq 0 ]
 }
+#endif
 
