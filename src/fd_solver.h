@@ -14,7 +14,9 @@
 #include <gsl/gsl_spblas.h>
 
 #include <hdf5.h>
+#ifdef INCLUDE_PETSC
 #include <petsc.h>
+#endif
 /*
 
 FDM Solver Abstract Class 
@@ -62,7 +64,9 @@ class FDSolver{
     ~FDSolver();
     //void (*solver_method)(const size_t& N, gsl_spmatrix& A, gsl_vector& f, const gsl_vector& u)
     void system_solve(const char* outfile);
-    PetscErrorCode petsc_solver();
+    #ifdef INCLUDE_PETSC
+    const PetscErrorCode petsc_solver();
+    #endif
     //adding order as a parameter to the construct matrix function
     //virtual void construct_matrix(const int& order)=0; // pure virtual function defined in derived class
     //virtual void construct_matrix()=0; // pure virtual function defined in derived class
