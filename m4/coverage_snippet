@@ -24,6 +24,6 @@ lcov-reset:
 	@find . -name "*.gcda" -exec rm {} \;
 	lcov --directory . --zerocounters
 
-coverage: test lcov-reset check lcov-report
+coverage: lcov-reset check lcov-report
 
 endif

@@ -16,8 +16,8 @@ AC_PROG_CXX
 #AC_CHECK_LIB([gsl],[gsl_blas_dgemm])
 
 AX_PATH_GRVY([0.32],[yes])
-AX_PATH_GSL(2.7,[],AC_MSG_ERROR([Unable to locate GSL or meet minimum version requirement]))
-AX_PATH_HDF5([1.10.8],[yes])
+AX_PATH_GSL(2.6,[],AC_MSG_ERROR([Unable to locate GSL or meet minimum version requirement]))
+AX_PATH_HDF5([1.10.5],[yes])
 AX_PATH_PETSC([3.19],[no])
 # Checks for code coverage.
 AX_CODE_COVERAGE
