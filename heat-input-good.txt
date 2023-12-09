@@ -23,7 +23,7 @@ DIM = 2 # Problem dimension, 1 or 2d
 N = 10        # Mesh Discretization
 
 # ------------------------------------------------------------------------------
-# Options for how to solve the PDE
+# Options for how to solve the PDE 
 # ------------------------------------------------------------------------------
 
 [solver]
