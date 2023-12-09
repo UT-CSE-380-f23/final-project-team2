@@ -41,7 +41,7 @@ run $executable ../heat-input-good.txt ../temp.h5
 #[ "${lines[-2]}" = "L2 norm of the error : 0.0499302" ]
 #[ "${lines[-1]}" = "Done outputing to file" ]
 }
-@test "verify ./run runs correctly in verify mode" {
+@test "verify ./run runs correctly for 1d and 2d cases" {
 #run $("${factorial_executable} -1")
 run $executable ../heat-input-good-other.txt ../temp.h5
 run $executable ../heat-input-good.txt ../temp.h5
